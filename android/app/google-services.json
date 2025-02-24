@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "851923876882",
+    "project_id": "gruposat-c172a",
+    "storage_bucket": "gruposat-c172a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:851923876882:android:271f0205f8366c3f08eccb",
+        "android_client_info": {
+          "package_name": "com.example.es_el_bueno"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0zgRW5BxsSJkR9bSXV01DvHB2WvhTpfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

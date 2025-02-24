@@ -1,0 +1,32 @@
+name: es_el_bueno
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.3
+  firebase_core: ^2.25.4
+  firebase_auth: ^4.17.4
+  cloud_firestore: ^4.15.4
+  get_it: ^7.6.7
+  dartz: ^0.10.1
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/Logo-SAT-icon.png"
+
+flutter:
+  uses-material-design: true
