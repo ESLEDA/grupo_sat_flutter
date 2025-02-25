@@ -20,6 +20,31 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F8FF),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF5F8FF),//0xFFF5F8FF
+          centerTitle: true,
+          automaticallyImplyLeading: false, // Quita el botón de retroceso si no lo necesitas
+          toolbarHeight: 200, // Ajusta este valor según el tamaño de tu logo (60) + texto + algo de espacio
+          title: const Column(
+            mainAxisSize: MainAxisSize.min, // Esto hace que la columna ocupe solo el espacio necesario
+            children: [
+              Image(
+                image: AssetImage('assets/images/Logo-SAT.png'),
+                height: 62,
+              ),
+              SizedBox(height: 25),
+              Text(
+                'Inicio de sesión',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF444957),
+                ),
+              ),
+            ],
+          ),
+        ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -36,101 +61,109 @@ class _LoginPageState extends State<LoginPage> {
           }
         },
         child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Icon(
-                    Icons.inventory,
-                    size: 80,
-                    color: Colors.blue,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Sistema de Manejo de Materiales',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Correo electrónico',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: AuthValidators.validateEmail,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Contraseña',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
+          child: Transform.translate(
+            offset: const Offset(0, -50),
+            child: SingleChildScrollView(
+               padding: const EdgeInsets.only(
+                 top: 0.0, // Reduce este valor para acercar los elementos al AppBar
+                 left: 24.0,
+                 right: 24.0,
+                 bottom: 24.0,
+                ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    
+                    
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Correo electrónico',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.email),
                       ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: AuthValidators.validateEmail,
                     ),
-                    obscureText: _obscurePassword,
-                    validator: AuthValidators.validatePassword,
-                  ),
-                  const SizedBox(height: 24),
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            context.read<AuthBloc>().add(
-                                  LoginRequested(
-                                    _emailController.text,
-                                    _passwordController.text,
-                                  ),
-                                );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Contraseña',
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
                         ),
-                        child: const Text(
-                          'Iniciar Sesión',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('¿Eres empleado y no tienes cuenta?'),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/registro');
-                        },
-                        child: const Text('Registrarse'),
                       ),
-                    ],
-                  ),
-                ],
+                      obscureText: _obscurePassword,
+                      validator: AuthValidators.validatePassword,
+                    ),
+                    const SizedBox(height: 24),
+                    BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        if (state is AuthLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              context.read<AuthBloc>().add(
+                                    LoginRequested(
+                                      _emailController.text,
+                                      _passwordController.text,
+                                    ),
+                                  );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF193F6E), 
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                          ),
+                          child: const Text(
+                            'Iniciar Sesión',
+                            style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFFF5F8FF), // Añade esta línea para el color del texto
+                          ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('¿No tienes cuenta?',
+                          
+                        ),
+                        TextButton(
+                         onPressed: () {
+                           Navigator.pushNamed(context, '/registro');
+                          },
+                          child: const Text(
+                           'Registrate',
+                           style: TextStyle(
+                             color: Color(0xFF193F6E),
+                             fontWeight: FontWeight.bold,
+                             fontSize: 15
+                           ),
+                          ),
+                       ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
