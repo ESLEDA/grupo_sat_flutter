@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: const Color(0xFFF5F8FF),//0xFFF5F8FF
           centerTitle: true,
           automaticallyImplyLeading: false, // Quita el botón de retroceso si no lo necesitas
-          toolbarHeight: 200, // Ajusta este valor según el tamaño de tu logo (60) + texto + algo de espacio
+          toolbarHeight: 120, // Ajusta este valor según el tamaño de tu logo (60) + texto + algo de espacio
           title: const Column(
             mainAxisSize: MainAxisSize.min, // Esto hace que la columna ocupe solo el espacio necesario
             children: [
