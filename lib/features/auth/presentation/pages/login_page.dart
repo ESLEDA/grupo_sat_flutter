@@ -61,11 +61,10 @@ class _LoginPageState extends State<LoginPage> {
           }
         },
         child: Center(
-          child: Transform.translate(
-            offset: const Offset(0, -50),
+        
             child: SingleChildScrollView(
                padding: const EdgeInsets.only(
-                 top: 0.0, // Reduce este valor para acercar los elementos al AppBar
+                 top: 10.0, // Reduce este valor para acercar los elementos al AppBar
                  left: 24.0,
                  right: 24.0,
                  bottom: 24.0,
@@ -82,7 +81,15 @@ class _LoginPageState extends State<LoginPage> {
                       controller: _emailController,
                       decoration: const InputDecoration(
                         labelText: 'Correo electrónico',
-                        border: OutlineInputBorder(),
+                        border:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                         prefixIcon: Icon(Icons.email),
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -93,7 +100,15 @@ class _LoginPageState extends State<LoginPage> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
-                        border: const OutlineInputBorder(),
+                        border: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -166,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-          ),
+  
         ),
       ),
     );
