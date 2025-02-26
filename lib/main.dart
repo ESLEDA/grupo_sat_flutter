@@ -7,9 +7,16 @@ import 'features/auth/presentation/pagesEmpleado/empleado_page.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/registro_page.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  
   await Firebase.initializeApp();
   
   final authRepository = AuthRepository();

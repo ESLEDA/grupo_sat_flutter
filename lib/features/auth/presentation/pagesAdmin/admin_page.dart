@@ -1,14 +1,97 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'registrar_admin_page.dart';
+import 'perfil_administrador.dart';
 
-class AdminPage extends StatelessWidget {
+class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
+
+  @override
+  State<AdminPage> createState() => _AdminPageState();
+}
+
+class _AdminPageState extends State<AdminPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String _nombreAdmin = '';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatosAdmin();
+  }
+
+  Future<void> _cargarDatosAdmin() async {
+    try {
+      // Obtener el usuario actual autenticado
+      final User? user = _auth.currentUser;
+      if (user != null) {
+        // Obtener datos del administrador desde Firestore
+        final adminDoc = await _firestore
+            .collection('administradores')
+            .doc(user.uid)
+            .get();
+
+        if (adminDoc.exists) {
+          setState(() {
+            _nombreAdmin = adminDoc.data()?['nombreAdm'] ?? 'Administrador';
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error al cargar datos del administrador: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF444957),
       appBar: AppBar(
-        title: const Text('Vista Administrador'),
+        title: _isLoading
+            ? const Text('Cargando...')
+            : Text('Hola $_nombreAdmin'),
+        actions: [
+          // Botón circular para ir al perfil
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color(0xFF444957),
+                  width: 2.0,
+                ),
+              ),
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.person,
+                    color: Color(0xFF193F6E),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PerfilAdministradorPage(),
+                      ),
+                    ).then((_) {
+                      // Recargar los datos cuando regrese del perfil
+                      _cargarDatosAdmin();
+                    });
+                  },
+                ),
+              ),
+            ),
+          )
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -56,12 +139,31 @@ class AdminPage extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Mi Perfil'),
+              onTap: () {
+                // Cerrar el drawer
+                Navigator.pop(context);
+                // Navegar a la página de perfil
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PerfilAdministradorPage(),
+                  ),
+                ).then((_) {
+                  // Recargar los datos cuando regrese del perfil
+                  _cargarDatosAdmin();
+                });
+              },
+            ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar Sesión'),
               onTap: () {
                 // Implementar lógica de cierre de sesión
+                _auth.signOut();
                 Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/');
               },
@@ -69,10 +171,13 @@ class AdminPage extends StatelessWidget {
           ],
         ),
       ),
-      body: const Center(
-        child: Text(
-          'Bienvenido, Administrador',
-          style: TextStyle(fontSize: 20),
+      body: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.6,
+          child: Image.asset(
+            'assets/images/Sat.png',
+            fit: BoxFit.contain,
+          ),
         ),
       ),
     );
