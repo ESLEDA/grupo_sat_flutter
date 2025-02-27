@@ -33,28 +33,6 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F8FF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F8FF),
-        centerTitle: true,
-        toolbarHeight: 120,
-        title:  Column(
-          children: [
-            Image.asset(
-              'assets/images/Logo-SAT.png',
-              height: 62,
-            ),
-            const Text(
-              'Añadir administrador',
-              style: TextStyle(
-                color: Color(0xFF444957),
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              )
-            ),
-            
-          ],
-        )
-      ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -68,188 +46,227 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
             );
           }
         },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _nombreController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre',
-                    border:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
-                          ),
-                          focusedBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
-                          ),
-                    prefixIcon: Icon(Icons.person),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'El nombre es requerido';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _primerApellidoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Primer Apellido',
-                    border:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
-                          ),
-                          focusedBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
-                          ),
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'El primer apellido es requerido';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _segundoApellidoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Segundo Apellido (Opcional)',
-                    border:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
-                          ),
-                          focusedBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
-                          ),
-                    prefixIcon: Icon(Icons.person_outline),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 160.0,
+              floating: false,
+              pinned: true,
+              backgroundColor: const Color(0xFFF5F8FF),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                titlePadding: const EdgeInsets.only(bottom: 16),
+                title: const Text(
+                  'Añadir administrador',
+                  style: TextStyle(
+                    color: Color(0xFF444957),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _celularController,
-                  decoration: const InputDecoration(
-                    labelText: 'Celular',
-                    border:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
-                          ),
-                          focusedBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
-                          ),
-                    prefixIcon: Icon(Icons.phone),
+                collapseMode: CollapseMode.pin,
+                background: Padding(
+                  padding: const EdgeInsets.only(bottom: 50),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Logo-SAT.png',
+                          height: 62,
+                        ),
+                      ],
+                    ),
                   ),
-                  keyboardType: TextInputType.phone,
-                  validator: AuthValidators.validatePhone,
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _correoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Correo Electrónico',
-                    border:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
-                          ),
-                          focusedBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
-                          ),
-                    prefixIcon: Icon(Icons.email),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: AuthValidators.validateEmail,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _contrasenaController,
-                  decoration: const InputDecoration(
-                    labelText: 'Contraseña',
-                    border:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
-                          ),
-                          focusedBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
-                          ),
-                    prefixIcon: Icon(Icons.lock),
-                    helperText: 'Al menos 8 caracteres, una mayúscula, un número y un carácter especial (#,%,&,+)',
-                  ),
-                  obscureText: true,
-                  validator: AuthValidators.validatePassword,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _confirmarContrasenaController,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirmar Contraseña',
-                    border:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
-                          ),
-                          focusedBorder:  OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
-                          ),
-                    prefixIcon: Icon(Icons.lock_outline),
-                  ),
-                  obscureText: true,
-                  validator: _validateConfirmPassword,
-                ),
-                const SizedBox(height: 24),
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    if (state is AuthLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return ElevatedButton.icon(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          final administrador = Administrador(
-                            id: '', // Se generará en Firebase
-                            nombreAdm: _nombreController.text,
-                            primerApellidoAdm: _primerApellidoController.text,
-                            segundoApellidoAdm: _segundoApellidoController.text.isEmpty 
-                                ? null 
-                                : _segundoApellidoController.text,
-                            celularAdm: _celularController.text,
-                            contrasenaAdm: _contrasenaController.text,
-                            correoAdm: _correoController.text,
-                          );
-                          context.read<AuthBloc>().add(RegisterAdminRequested(administrador));
-                        }
-                      },
-                      icon: const Icon(Icons.admin_panel_settings),
-                      label: const Text('Registrar Administrador'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                      ),
-                    );
-                  },
-                ),
-              ],
+              ),
             ),
-          ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverToBoxAdapter(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: _nombreController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nombre',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          prefixIcon: Icon(Icons.person),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'El nombre es requerido';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _primerApellidoController,
+                        decoration: const InputDecoration(
+                          labelText: 'Primer Apellido',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          prefixIcon: Icon(Icons.person_outline),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'El primer apellido es requerido';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _segundoApellidoController,
+                        decoration: const InputDecoration(
+                          labelText: 'Segundo Apellido (Opcional)',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          prefixIcon: Icon(Icons.person_outline),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _celularController,
+                        decoration: const InputDecoration(
+                          labelText: 'Celular',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          prefixIcon: Icon(Icons.phone),
+                        ),
+                        keyboardType: TextInputType.phone,
+                        validator: AuthValidators.validatePhone,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _correoController,
+                        decoration: const InputDecoration(
+                          labelText: 'Correo Electrónico',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          prefixIcon: Icon(Icons.email),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: AuthValidators.validateEmail,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _contrasenaController,
+                        decoration: const InputDecoration(
+                          labelText: 'Contraseña',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          prefixIcon: Icon(Icons.lock),
+                          helperText: 'Al menos 8 caracteres, una mayúscula, un número y un carácter especial (#,%,&,+)',
+                        ),
+                        obscureText: true,
+                        validator: AuthValidators.validatePassword,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _confirmarContrasenaController,
+                        decoration: const InputDecoration(
+                          labelText: 'Confirmar Contraseña',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          prefixIcon: Icon(Icons.lock_outline),
+                        ),
+                        obscureText: true,
+                        validator: _validateConfirmPassword,
+                      ),
+                      const SizedBox(height: 24),
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          if (state is AuthLoading) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          return ElevatedButton.icon(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                final administrador = Administrador(
+                                  id: '', // Se generará en Firebase
+                                  nombreAdm: _nombreController.text,
+                                  primerApellidoAdm: _primerApellidoController.text,
+                                  segundoApellidoAdm: _segundoApellidoController.text.isEmpty 
+                                      ? null 
+                                      : _segundoApellidoController.text,
+                                  celularAdm: _celularController.text,
+                                  contrasenaAdm: _contrasenaController.text,
+                                  correoAdm: _correoController.text,
+                                );
+                                context.read<AuthBloc>().add(RegisterAdminRequested(administrador));
+                              }
+                            },
+                            icon: const Icon(Icons.admin_panel_settings),
+                            label: const Text('Registrar Administrador'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
