@@ -205,11 +205,23 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
                           prefixIcon: Icon(Icons.lock),
-                          helperText: 'Al menos 8 caracteres, una mayúscula, un número y un carácter especial (#,%,&,+)',
+                          
                         ),
                         obscureText: true,
                         validator: AuthValidators.validatePassword,
                       ),
+                      const SizedBox(height: 4),
+                      const Text('La contraseña debe cumplir con los siguientes requisitos:',
+                        style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const SizedBox(height: 4),
+                      const Text('• Debe contener al menos 8 caracteres.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text('• Debe contener al menos un número.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text('• Debe contener al menos una letra mayúscula.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text('• Debe contener al menos un carácter especial (#,%,&,+).',
+                        style: TextStyle(fontSize: 12, color: Colors.grey)),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _confirmarContrasenaController,
@@ -252,10 +264,21 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                                 context.read<AuthBloc>().add(RegisterAdminRequested(administrador));
                               }
                             },
-                            icon: const Icon(Icons.admin_panel_settings),
-                            label: const Text('Registrar Administrador'),
+                            icon: const Icon(
+                              Icons.admin_panel_settings,
+                              color: Color(0xFFF5F8FF)),
+                            label: const Text(
+                              'Registrar Administrador',
+                              style: TextStyle(
+                                color: Color(0xFFF5F8FF),
+                                fontWeight: FontWeight.bold,
+                              )),
                             style: ElevatedButton.styleFrom(
+                               backgroundColor: const Color(0xFF193F6E),
                               padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
                             ),
                           );
                         },
