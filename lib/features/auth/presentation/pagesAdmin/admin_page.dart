@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'registrar_admin_page.dart';
 import 'perfil_administrador.dart';
+import 'marcas_page.dart'; // Importamos la nueva página
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -123,6 +124,22 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                 ],
               ),
+            ),
+            // Agregamos el nuevo botón de Marcas
+            ListTile(
+              leading: const Icon(Icons.label),
+              title: const Text('Marcas'),
+              onTap: () {
+                // Cerrar el drawer
+                Navigator.pop(context);
+                // Navegar a la página de marcas
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MarcasPage(),
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.person_add),

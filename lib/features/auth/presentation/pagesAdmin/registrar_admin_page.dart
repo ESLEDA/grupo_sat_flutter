@@ -210,7 +210,7 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                         obscureText: true,
                         validator: AuthValidators.validatePassword,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 4), 
                       const Text('La contraseña debe cumplir con los siguientes requisitos:',
                         style: TextStyle(fontSize: 12, color: Colors.grey)),
                       const SizedBox(height: 4),
