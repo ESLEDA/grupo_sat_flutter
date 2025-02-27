@@ -32,8 +32,28 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F8FF),
       appBar: AppBar(
-        title: const Text('Registrar Administrador'),
+        backgroundColor: const Color(0xFFF5F8FF),
+        centerTitle: true,
+        toolbarHeight: 120,
+        title:  Column(
+          children: [
+            Image.asset(
+              'assets/images/Logo-SAT.png',
+              height: 62,
+            ),
+            const Text(
+              'Añadir administrador',
+              style: TextStyle(
+                color: Color(0xFF444957),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              )
+            ),
+            
+          ],
+        )
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -55,13 +75,7 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Información del Administrador',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _nombreController,
