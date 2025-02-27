@@ -67,7 +67,15 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                   controller: _nombreController,
                   decoration: const InputDecoration(
                     labelText: 'Nombre',
-                    border: OutlineInputBorder(),
+                    border:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                     prefixIcon: Icon(Icons.person),
                   ),
                   validator: (value) {
@@ -82,7 +90,15 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                   controller: _primerApellidoController,
                   decoration: const InputDecoration(
                     labelText: 'Primer Apellido',
-                    border: OutlineInputBorder(),
+                    border:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                   validator: (value) {
@@ -97,7 +113,15 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                   controller: _segundoApellidoController,
                   decoration: const InputDecoration(
                     labelText: 'Segundo Apellido (Opcional)',
-                    border: OutlineInputBorder(),
+                    border:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                 ),
@@ -106,7 +130,15 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                   controller: _celularController,
                   decoration: const InputDecoration(
                     labelText: 'Celular',
-                    border: OutlineInputBorder(),
+                    border:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                     prefixIcon: Icon(Icons.phone),
                   ),
                   keyboardType: TextInputType.phone,
@@ -117,7 +149,15 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                   controller: _correoController,
                   decoration: const InputDecoration(
                     labelText: 'Correo Electrónico',
-                    border: OutlineInputBorder(),
+                    border:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                     prefixIcon: Icon(Icons.email),
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -128,7 +168,15 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                   controller: _contrasenaController,
                   decoration: const InputDecoration(
                     labelText: 'Contraseña',
-                    border: OutlineInputBorder(),
+                    border:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                     prefixIcon: Icon(Icons.lock),
                     helperText: 'Al menos 8 caracteres, una mayúscula, un número y un carácter especial (#,%,&,+)',
                   ),
@@ -140,7 +188,15 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                   controller: _confirmarContrasenaController,
                   decoration: const InputDecoration(
                     labelText: 'Confirmar Contraseña',
-                    border: OutlineInputBorder(),
+                    border:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Hace los bordes más curvos
+                          ),
+                          enabledBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando no está enfocado
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)), // Mantiene la curvatura cuando está enfocado
+                          ),
                     prefixIcon: Icon(Icons.lock_outline),
                   ),
                   obscureText: true,
