@@ -17,6 +17,13 @@ dependencies:
   dartz: ^0.10.1
   equatable: ^2.0.5
   flutter_bloc: ^8.1.4
+  printing: ^5.13.1
+  pdf: ^3.11.3
+  cupertino_icons: ^1.0.8
+  
+  
+  
+  
 
 dev_dependencies:
   flutter_test:
