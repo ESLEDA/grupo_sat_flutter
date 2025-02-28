@@ -21,6 +21,9 @@ class _RegistroPageState extends State<RegistroPage> {
   final _correoController = TextEditingController();
   final _contrasenaController = TextEditingController();
   final _confirmarContrasenaController = TextEditingController();
+  
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   String? _validateConfirmPassword(String? value) {
     if (value != _contrasenaController.text) {
@@ -188,20 +191,31 @@ class _RegistroPageState extends State<RegistroPage> {
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _contrasenaController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Contraseña',
-                          prefixIcon: Icon(Icons.lock, color: Color(0xFF193F6E)),
-                          border: OutlineInputBorder(
+                          prefixIcon: const Icon(Icons.lock, color: Color(0xFF193F6E)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                              color: const Color(0xFF193F6E),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          focusedBorder: OutlineInputBorder(
+                          focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
                         ),
-                        obscureText: true,
+                        obscureText: _obscurePassword,
                         validator: AuthValidators.validatePassword,
                       ),
                       // Texto informativo sobre requisitos de contraseña
@@ -227,20 +241,31 @@ class _RegistroPageState extends State<RegistroPage> {
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _confirmarContrasenaController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Confirmar Contraseña',
-                          prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF193F6E)),
-                          border: OutlineInputBorder(
+                          prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF193F6E)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                              color: const Color(0xFF193F6E),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword = !_obscureConfirmPassword;
+                              });
+                            },
+                          ),
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          focusedBorder: OutlineInputBorder(
+                          focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
                         ),
-                        obscureText: true,
+                        obscureText: _obscureConfirmPassword,
                         validator: _validateConfirmPassword,
                       ),
                       const SizedBox(height: 24),
