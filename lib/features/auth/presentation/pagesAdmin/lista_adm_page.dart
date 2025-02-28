@@ -125,7 +125,7 @@ class _ListaAdmPageState extends State<ListaAdmPage> {
                         ),
                       ],
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
               pw.SizedBox(height: 20),
@@ -241,7 +241,7 @@ class _ListaAdmPageState extends State<ListaAdmPage> {
                     : const Icon(CupertinoIcons.doc_text),
                   label: const Text('PDF'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF193F6E),
+                    backgroundColor: const Color(0xFFD7282F),
                     foregroundColor: Colors.white,
                   ),
                 ),
