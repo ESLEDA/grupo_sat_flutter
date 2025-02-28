@@ -33,7 +33,7 @@ class ListaAdmPage extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: const Center(
                 child: Text(
-                  'No hay administradores para mostrar',
+                  'No hay administradores para mostrar /todo crear card',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
