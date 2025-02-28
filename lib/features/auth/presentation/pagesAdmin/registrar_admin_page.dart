@@ -21,6 +21,10 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
   final _correoController = TextEditingController();
   final _contrasenaController = TextEditingController();
   final _confirmarContrasenaController = TextEditingController();
+  
+  // Variables para controlar la visibilidad de las contraseñas
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   String? _validateConfirmPassword(String? value) {
     if (value != _contrasenaController.text) {
@@ -103,7 +107,7 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: Icon(Icons.person, color: Color(0xFF193F6E)),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -126,7 +130,7 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          prefixIcon: Icon(Icons.person_outline),
+                          prefixIcon: Icon(Icons.person_outline, color: Color(0xFF193F6E)),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -149,7 +153,7 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          prefixIcon: Icon(Icons.person_outline),
+                          prefixIcon: Icon(Icons.person_outline, color: Color(0xFF193F6E)),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -166,7 +170,7 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          prefixIcon: Icon(Icons.phone),
+                          prefixIcon: Icon(Icons.phone, color: Color(0xFF193F6E)),
                         ),
                         keyboardType: TextInputType.phone,
                         validator: AuthValidators.validatePhone,
@@ -185,7 +189,7 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          prefixIcon: Icon(Icons.email),
+                          prefixIcon: Icon(Icons.email, color: Color(0xFF193F6E)),
                         ),
                         keyboardType: TextInputType.emailAddress,
                         validator: AuthValidators.validateEmail,
@@ -193,21 +197,30 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _contrasenaController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Contraseña',
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          focusedBorder: OutlineInputBorder(
+                          focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          prefixIcon: Icon(Icons.lock),
-                          
+                          prefixIcon: const Icon(Icons.lock, color: Color(0xFF193F6E)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
                         ),
-                        obscureText: true,
+                        obscureText: _obscurePassword,
                         validator: AuthValidators.validatePassword,
                       ),
                       const SizedBox(height: 4), 
@@ -225,20 +238,30 @@ class _RegistrarAdminPageState extends State<RegistrarAdminPage> {
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _confirmarContrasenaController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Confirmar Contraseña',
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          focusedBorder: OutlineInputBorder(
+                          focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
-                          prefixIcon: Icon(Icons.lock_outline),
+                          prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF193F6E)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword = !_obscureConfirmPassword;
+                              });
+                            },
+                          ),
                         ),
-                        obscureText: true,
+                        obscureText: _obscureConfirmPassword,
                         validator: _validateConfirmPassword,
                       ),
                       const SizedBox(height: 24),
