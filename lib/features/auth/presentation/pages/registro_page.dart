@@ -89,6 +89,7 @@ class _RegistroPageState extends State<RegistroPage> {
                         controller: _nombreController,
                         decoration: const InputDecoration(
                           labelText: 'Nombre',
+                          prefixIcon: Icon(Icons.person, color: Color(0xFF193F6E)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
@@ -111,6 +112,7 @@ class _RegistroPageState extends State<RegistroPage> {
                         controller: _primerApellidoController,
                         decoration: const InputDecoration(
                           labelText: 'Primer Apellido',
+                          prefixIcon: Icon(Icons.person_outline, color: Color(0xFF193F6E)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
@@ -133,6 +135,7 @@ class _RegistroPageState extends State<RegistroPage> {
                         controller: _segundoApellidoController,
                         decoration: const InputDecoration(
                           labelText: 'Segundo Apellido (Opcional)',
+                          prefixIcon: Icon(Icons.person_outline, color: Color(0xFF193F6E)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
@@ -149,6 +152,7 @@ class _RegistroPageState extends State<RegistroPage> {
                         controller: _celularController,
                         decoration: const InputDecoration(
                           labelText: 'Celular',
+                          prefixIcon: Icon(Icons.phone_android, color: Color(0xFF193F6E)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
@@ -167,6 +171,7 @@ class _RegistroPageState extends State<RegistroPage> {
                         controller: _correoController,
                         decoration: const InputDecoration(
                           labelText: 'Correo Electrónico',
+                          prefixIcon: Icon(Icons.email, color: Color(0xFF193F6E)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
@@ -185,6 +190,7 @@ class _RegistroPageState extends State<RegistroPage> {
                         controller: _contrasenaController,
                         decoration: const InputDecoration(
                           labelText: 'Contraseña',
+                          prefixIcon: Icon(Icons.lock, color: Color(0xFF193F6E)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
@@ -223,6 +229,7 @@ class _RegistroPageState extends State<RegistroPage> {
                         controller: _confirmarContrasenaController,
                         decoration: const InputDecoration(
                           labelText: 'Confirmar Contraseña',
+                          prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF193F6E)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(18.0)),
                           ),
