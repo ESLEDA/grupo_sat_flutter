@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'registrar_admin_page.dart';
 import 'perfil_administrador.dart';
-import 'marcas_page.dart'; // Importamos la nueva página
+import 'marcas_page.dart';
+import 'lista_adm_page.dart'; // Importamos la nueva página
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -125,7 +125,7 @@ class _AdminPageState extends State<AdminPage> {
                 ],
               ),
             ),
-            // Agregamos el nuevo botón de Marcas
+            // Botón de Marcas
             ListTile(
               leading: const Icon(Icons.label),
               title: const Text('Marcas'),
@@ -141,17 +141,18 @@ class _AdminPageState extends State<AdminPage> {
                 );
               },
             ),
+            // Modificamos este ListTile para que ahora redirija a lista_adm_page
             ListTile(
-              leading: const Icon(Icons.person_add),
-              title: const Text('Registrar Administrador'),
+              leading: const Icon(Icons.people),
+              title: const Text('Administradores'),
               onTap: () {
                 // Cerrar el drawer
                 Navigator.pop(context);
-                // Navegar a la página de registro de administrador
+                // Navegar a la página de lista de administradores
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const RegistrarAdminPage(),
+                    builder: (context) => const ListaAdmPage(),
                   ),
                 );
               },
