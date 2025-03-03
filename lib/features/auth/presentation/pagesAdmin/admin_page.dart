@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'perfil_page/perfil_administrador.dart';
 import 'marcas_pages/marcas_page.dart';
-import 'lista_adm_pages/lista_adm_page.dart'; // Importamos la nueva página
+import 'almacenes_page.dart';
+import 'lista_adm_pages/lista_adm_page.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -43,6 +44,7 @@ class _AdminPageState extends State<AdminPage> {
         }
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error al cargar datos del administrador: $e');
       setState(() {
         _isLoading = false;
@@ -141,7 +143,23 @@ class _AdminPageState extends State<AdminPage> {
                 );
               },
             ),
-            // Modificamos este ListTile para que ahora redirija a lista_adm_page
+            // Botón de Almacenes
+            ListTile(
+              leading: const Icon(Icons.warehouse),
+              title: const Text('Almacenes'),
+              onTap: () {
+                // Cerrar el drawer
+                Navigator.pop(context);
+                // Navegar a la página de almacenes
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AlmacenesPage(),
+                  ),
+                );
+              },
+            ),
+            // Botón de Administradores
             ListTile(
               leading: const Icon(Icons.people),
               title: const Text('Administradores'),
@@ -157,6 +175,7 @@ class _AdminPageState extends State<AdminPage> {
                 );
               },
             ),
+            // Botón de Mi Perfil
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text('Mi Perfil'),
@@ -176,6 +195,7 @@ class _AdminPageState extends State<AdminPage> {
               },
             ),
             const Divider(),
+            // Botón de Cerrar Sesión
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar Sesión'),
