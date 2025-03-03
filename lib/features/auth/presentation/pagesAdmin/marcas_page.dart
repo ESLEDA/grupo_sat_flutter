@@ -177,6 +177,7 @@ class _MarcasPageState extends State<MarcasPage> {
                       ),
                     ).then((_) {
                       // Recargar las marcas cuando vuelva
+                      // ignore: use_build_context_synchronously
                       context.read<MarcaBloc>().add(LoadMarcas());
                     });
                   },
@@ -342,13 +343,7 @@ class MarcaCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text(
-                  'ID: ${marca.idMarca}',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14.0,
-                  ),
-                ),
+               
               ],
             ),
           ),
