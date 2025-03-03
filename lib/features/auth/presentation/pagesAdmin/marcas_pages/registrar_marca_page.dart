@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/marca_bloc.dart';
+import '../../bloc/marca_bloc.dart';
 
-import '../../domain/entities/marca.dart';
+import '../../../domain/entities/marca.dart';
 
 class RegistrarMarcaPage extends StatefulWidget {
   const RegistrarMarcaPage({super.key});

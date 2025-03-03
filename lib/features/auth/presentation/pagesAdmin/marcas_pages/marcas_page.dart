@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import '../bloc/marca_bloc.dart';
-import '../../domain/entities/marca.dart';
+import '../../bloc/marca_bloc.dart';
+import '../../../domain/entities/marca.dart';
 import 'registrar_marca_page.dart';
 
 class MarcasPage extends StatefulWidget {

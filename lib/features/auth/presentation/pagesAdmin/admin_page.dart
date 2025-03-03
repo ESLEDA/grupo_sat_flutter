@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'perfil_administrador.dart';
-import 'marcas_page.dart';
+import 'marcas_pages/marcas_page.dart';
 import 'lista_adm_page.dart'; // Importamos la nueva página
 
 class AdminPage extends StatefulWidget {
