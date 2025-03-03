@@ -52,10 +52,6 @@ class _MarcasPageState extends State<MarcasPage> {
                     children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8.0),
-                        child: pw.Text('ID', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(8.0),
                         child: pw.Text('Nombre', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                       ),
                       pw.Padding(
@@ -72,10 +68,6 @@ class _MarcasPageState extends State<MarcasPage> {
                   ...marcas.map((marca) {
                     return pw.TableRow(
                       children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8.0),
-                          child: pw.Text(marca.idMarca.toString()),
-                        ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
                           child: pw.Text(marca.nombreMarca),
