@@ -212,7 +212,7 @@ class _ListaAdmPageState extends State<ListaAdmPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const RegistrarAdminPage(),
+                        builder: (context) => const RegistrarAdministradorPage(),
                       ),
                     ).then((_) {
                       // Recargar la lista cuando vuelva
