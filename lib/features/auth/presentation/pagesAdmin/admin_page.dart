@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'perfil_page/perfil_administrador.dart';
 import 'marcas_pages/marcas_page.dart';
-import 'almacenes_page.dart';
+import 'almacenes_pages/almacenes_page.dart';
 import 'lista_adm_pages/lista_adm_page.dart';
 
 class AdminPage extends StatefulWidget {

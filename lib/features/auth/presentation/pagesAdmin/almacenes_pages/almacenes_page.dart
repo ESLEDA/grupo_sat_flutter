@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import '../bloc/almacen_bloc.dart';
-import '../../domain/entities/almacen.dart';
+import '../../bloc/almacen_bloc.dart';
+import '../../../domain/entities/almacen.dart';
 import 'registrar_almacen_page.dart';
 
 class AlmacenesPage extends StatefulWidget {

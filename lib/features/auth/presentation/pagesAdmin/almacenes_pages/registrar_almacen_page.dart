@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/almacen_bloc.dart';
+import '../../bloc/almacen_bloc.dart';
 
-import '../../domain/entities/almacen.dart';
+import '../../../domain/entities/almacen.dart';
 
 class RegistrarAlmacenPage extends StatefulWidget {
   const RegistrarAlmacenPage({super.key});

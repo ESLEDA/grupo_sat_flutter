@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../bloc/auth_bloc.dart';
-import '../../../domain/entities/administrador.dart';
-
 import '../../../../../core/validators/auth_validators.dart';
 
 class RegistrarAdministradorPage extends StatefulWidget {
@@ -26,220 +22,294 @@ class _RegistrarAdministradorPageState extends State<RegistrarAdministradorPage>
   final _passwordActualController = TextEditingController(); // Para reautenticar
 
   bool _cargando = false;
+  bool _mostrarContrasena = false; // Para controlar la visibilidad de la contraseña
+  bool _mostrarConfirmarContrasena = false; // Para controlar la visibilidad de la confirmación
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F8FF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F8FF),
-        title: const Text('Registrar Nuevo Administrador'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Logo o imagen
-              Center(
-                child: Image.asset(
-                  'assets/images/Logo-SAT.png',
-                  height: 100,
+      body: CustomScrollView(
+        slivers: [
+          // AppBar exactamente igual al de RegistroPage
+          SliverAppBar(
+            expandedHeight: 160.0,
+            floating: false,
+            pinned: true,
+            backgroundColor: const Color(0xFFF5F8FF),
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: const Text(
+                'Registrar Nuevo Administrador',
+                style: TextStyle(
+                  color: Color(0xFF444957),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
                 ),
               ),
-              const SizedBox(height: 24),
-              
-              // Nombre
-              TextFormField(
-                controller: _nombreController,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  prefixIcon: Icon(Icons.person),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'El nombre es requerido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              
-              // Primer Apellido
-              TextFormField(
-                controller: _primerApellidoController,
-                decoration: const InputDecoration(
-                  labelText: 'Primer Apellido',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  prefixIcon: Icon(Icons.person_outline),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'El primer apellido es requerido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              
-              // Segundo Apellido
-              TextFormField(
-                controller: _segundoApellidoController,
-                decoration: const InputDecoration(
-                  labelText: 'Segundo Apellido (Opcional)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  prefixIcon: Icon(Icons.person_outline),
+              background: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/Logo-SAT.png',
+                      height: 62,
+                    ),
+                    const SizedBox(height: 30),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-              
-              // Celular
-              TextFormField(
-                controller: _celularController,
-                decoration: const InputDecoration(
-                  labelText: 'Celular',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  prefixIcon: Icon(Icons.phone),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: AuthValidators.validatePhone,
-              ),
-              const SizedBox(height: 16),
-              
-              // Correo Electrónico
-              TextFormField(
-                controller: _correoController,
-                decoration: const InputDecoration(
-                  labelText: 'Correo Electrónico',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: AuthValidators.validateEmail,
-              ),
-              const SizedBox(height: 16),
-              
-              // Contraseña
-              TextFormField(
-                controller: _contrasenaController,
-                decoration: const InputDecoration(
-                  labelText: 'Contraseña',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  prefixIcon: Icon(Icons.lock),
-                ),
-                obscureText: true,
-                validator: AuthValidators.validatePassword,
-              ),
-              const SizedBox(height: 16),
-              
-              // Confirmar Contraseña
-              TextFormField(
-                controller: _confirmarContrasenaController,
-                decoration: const InputDecoration(
-                  labelText: 'Confirmar Contraseña',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                  ),
-                  prefixIcon: Icon(Icons.lock_outline),
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Debe confirmar la contraseña';
-                  }
-                  if (value != _contrasenaController.text) {
-                    return 'Las contraseñas no coinciden';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              
-              // Botón de Registro
-              ElevatedButton.icon(
-                onPressed: _cargando
-                    ? null
-                    : _registrarAdministrador,
-                icon: _cargando
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Icon(Icons.person_add),
-                label: const Text('Registrar Administrador'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF193F6E),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          
+          // Contenido del formulario
+          SliverPadding(
+            padding: const EdgeInsets.all(14.0),
+            sliver: SliverToBoxAdapter(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Nombre
+                    TextFormField(
+                      controller: _nombreController,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        prefixIcon: Icon(Icons.person, color: Color(0xFF193F6E)),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'El nombre es requerido';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Primer Apellido
+                    TextFormField(
+                      controller: _primerApellidoController,
+                      decoration: const InputDecoration(
+                        labelText: 'Primer Apellido',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        prefixIcon: Icon(Icons.person_outline, color: Color(0xFF193F6E)),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'El primer apellido es requerido';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Segundo Apellido
+                    TextFormField(
+                      controller: _segundoApellidoController,
+                      decoration: const InputDecoration(
+                        labelText: 'Segundo Apellido (Opcional)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        prefixIcon: Icon(Icons.person_outline, color: Color(0xFF193F6E)),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Celular
+                    TextFormField(
+                      controller: _celularController,
+                      decoration: const InputDecoration(
+                        labelText: 'Celular',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        prefixIcon: Icon(Icons.phone, color: Color(0xFF193F6E)),
+                      ),
+                      keyboardType: TextInputType.phone,
+                      validator: AuthValidators.validatePhone,
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Correo Electrónico
+                    TextFormField(
+                      controller: _correoController,
+                      decoration: const InputDecoration(
+                        labelText: 'Correo Electrónico',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        prefixIcon: Icon(Icons.email, color: Color(0xFF193F6E)),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: AuthValidators.validateEmail,
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Contraseña con toggle de visibilidad
+                    TextFormField(
+                      controller: _contrasenaController,
+                      decoration: InputDecoration(
+                        labelText: 'Contraseña',
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        prefixIcon: const Icon(Icons.lock, color: Color(0xFF193F6E)),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _mostrarContrasena ? Icons.visibility : Icons.visibility_off,
+                            color: const Color(0xFF193F6E),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarContrasena = !_mostrarContrasena;
+                            });
+                          },
+                          tooltip: _mostrarContrasena ? 'Ocultar contraseña' : 'Mostrar contraseña',
+                        ),
+                      ),
+                      obscureText: !_mostrarContrasena,
+                      validator: AuthValidators.validatePassword,
+                    ),
+                    
+                    // Texto informativo sobre requisitos de contraseña
+                    Container(
+                      padding: const EdgeInsets.only(left: 12, top: 8),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('La contraseña debe cumplir con los siguientes requisitos:',
+                              style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          SizedBox(height: 4),
+                          Text('• Debe contener al menos 8 caracteres.',
+                              style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          Text('• Debe contener al menos un número.',
+                              style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          Text('• Debe contener al menos una letra mayúscula.',
+                              style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          Text('• Debe contener al menos un carácter especial (#,%,&,+).',
+                              style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Confirmar Contraseña con toggle de visibilidad
+                    TextFormField(
+                      controller: _confirmarContrasenaController,
+                      decoration: InputDecoration(
+                        labelText: 'Confirmar Contraseña',
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF193F6E)),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _mostrarConfirmarContrasena ? Icons.visibility : Icons.visibility_off,
+                            color: const Color(0xFF193F6E),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarConfirmarContrasena = !_mostrarConfirmarContrasena;
+                            });
+                          },
+                          tooltip: _mostrarConfirmarContrasena ? 'Ocultar contraseña' : 'Mostrar contraseña',
+                        ),
+                      ),
+                      obscureText: !_mostrarConfirmarContrasena,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Debe confirmar la contraseña';
+                        }
+                        if (value != _contrasenaController.text) {
+                          return 'Las contraseñas no coinciden';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // Botón de Registro
+                    ElevatedButton.icon(
+                      onPressed: _cargando
+                          ? null
+                          : _registrarAdministrador,
+                      icon: _cargando
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Icon(Icons.person_add),
+                      label: const Text('Registrar Administrador'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF193F6E),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24), // Espacio adicional al final para mejor scroll
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -247,40 +317,55 @@ class _RegistrarAdministradorPageState extends State<RegistrarAdministradorPage>
   // Método para solicitar la contraseña actual para reautenticación
   Future<String?> _solicitarContrasenaActual() async {
     _passwordActualController.clear();
+    bool _mostrarPasswordActual = false;
     
     return showDialog<String>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirmar contraseña'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Para mantener tu sesión activa mientras registras un nuevo administrador, por favor ingresa tu contraseña actual.',
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Confirmar contraseña'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Para mantener tu sesión activa mientras registras un nuevo administrador, por favor ingresa tu contraseña actual.',
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _passwordActualController,
+                    obscureText: !_mostrarPasswordActual,
+                    decoration: InputDecoration(
+                      labelText: 'Contraseña actual',
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _mostrarPasswordActual ? Icons.visibility : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _mostrarPasswordActual = !_mostrarPasswordActual;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _passwordActualController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Contraseña actual',
-                  border: OutlineInputBorder(),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancelar'),
                 ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, _passwordActualController.text),
-              child: const Text('Confirmar'),
-            ),
-          ],
+                TextButton(
+                  onPressed: () => Navigator.pop(context, _passwordActualController.text),
+                  child: const Text('Confirmar'),
+                ),
+              ],
+            );
+          }
         );
       },
     );
@@ -337,15 +422,6 @@ class _RegistrarAdministradorPageState extends State<RegistrarAdministradorPage>
 
       // Preparar los datos del nuevo administrador
       String idTemporalAdmin = DateTime.now().millisecondsSinceEpoch.toString();
-      
-      // Crear el nuevo administrador
-      
-      // Estrategia: Usar REST API para crear usuario en Firebase
-      // Dado que no podemos crear usuarios sin iniciar sesión con ellos,
-      // y Firebase Admin SDK no está disponible en el cliente...
-      
-      // Esta es una alternativa: Guardar temporalmente los datos, cerrar sesión,
-      // crear el usuario, y luego volver a iniciar sesión con el usuario original
       
       // 1. Guardar temporalmente las credenciales actuales
       if (currentUser != null && currentEmail != null && currentPassword != null) {
