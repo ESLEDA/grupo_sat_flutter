@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';//
-import 'package:flutter_bloc/flutter_bloc.dart';//
-import 'package:firebase_core/firebase_core.dart';//
-import 'features/auth/presentation/pages/login_page.dart';//
-import 'features/auth/presentation/pagesAdmin/admin_page.dart';//
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'features/auth/presentation/pages/login_page.dart';
+import 'features/auth/presentation/pagesAdmin/admin_page.dart';
 import 'features/auth/presentation/pagesEmpleado/empleado_page.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/bloc/marca_bloc.dart';
 import 'features/auth/presentation/pages/registro_page.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
+import 'features/auth/data/repositories/marca_repository.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
@@ -20,16 +22,22 @@ void main() async {
   await Firebase.initializeApp();
   
   final authRepository = AuthRepository();
+  final marcaRepository = MarcaRepository();
   
-  runApp(MyApp(authRepository: authRepository));
+  runApp(MyApp(
+    authRepository: authRepository,
+    marcaRepository: marcaRepository,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final AuthRepository authRepository;
+  final MarcaRepository marcaRepository;
   
   const MyApp({
     super.key, 
     required this.authRepository,
+    required this.marcaRepository,
   });
 
   @override
@@ -38,6 +46,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => AuthBloc(authRepository),
+        ),
+        BlocProvider(
+          create: (context) => MarcaBloc(marcaRepository),
         ),
       ],
       child: MaterialApp(
