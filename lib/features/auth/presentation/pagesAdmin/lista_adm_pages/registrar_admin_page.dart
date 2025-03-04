@@ -421,7 +421,7 @@ class _RegistrarAdministradorPageState extends State<RegistrarAdministradorPage>
       }
 
       // Preparar los datos del nuevo administrador
-      String idTemporalAdmin = DateTime.now().millisecondsSinceEpoch.toString();
+      
       
       // 1. Guardar temporalmente las credenciales actuales
       if (currentUser != null && currentEmail != null && currentPassword != null) {

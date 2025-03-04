@@ -47,6 +47,8 @@ class CheckEmailExists extends AuthEvent {
   List<Object?> get props => [email];
 }
 
+class VerifyCurrentUser extends AuthEvent {}
+
 // States
 abstract class AuthState extends Equatable {
   @override
@@ -76,6 +78,14 @@ class EmailExistsState extends AuthState {
   @override
   List<Object?> get props => [exists];
 }
+class CurrentUserState extends AuthState {
+  final Map<String, dynamic> userData;
+  
+  CurrentUserState(this.userData);
+  
+  @override
+  List<Object?> get props => [userData];
+}
 
 // BLoC
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -91,9 +101,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           event.password
         );
         
+        print("Login exitoso como: ${result['userType']}");
         emit(AuthSuccess(result['userType']));
       } catch (e) {
-        emit(AuthError('Credenciales inválidas'));
+        print("Error en el bloc durante login: $e");
+        emit(AuthError('Credenciales inválidas: $e'));
       }
     });
 
@@ -103,14 +115,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // Verificar si el correo ya existe
         final exists = await _authRepository.emailExiste(event.empleado.correo);
         if (exists) {
+          print("El correo ya está registrado: ${event.empleado.correo}");
           emit(AuthError('El correo ya está registrado'));
           return;
         }
 
         // Registrar empleado en Firebase
         await _authRepository.registerEmpleado(event.empleado);
+        print("Empleado registrado exitosamente");
         emit(AuthSuccess('empleado'));
       } catch (e) {
+        print("Error en el bloc durante registro de empleado: $e");
         emit(AuthError(e.toString()));
       }
     });
@@ -121,14 +136,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // Verificar si el correo ya existe
         final exists = await _authRepository.emailExiste(event.administrador.correoAdm);
         if (exists) {
+          print("El correo de administrador ya está registrado: ${event.administrador.correoAdm}");
           emit(AuthError('El correo ya está registrado'));
           return;
         }
 
         // Registrar administrador en Firebase
         await _authRepository.registerAdministrador(event.administrador);
+        print("Administrador registrado exitosamente");
         emit(AuthSuccess('admin'));
       } catch (e) {
+        print("Error en el bloc durante registro de administrador: $e");
         emit(AuthError(e.toString()));
       }
     });
@@ -138,6 +156,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final exists = await _authRepository.emailExiste(event.email);
         emit(EmailExistsState(exists));
+      } catch (e) {
+        emit(AuthError(e.toString()));
+      }
+    });
+    
+    on<VerifyCurrentUser>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final userData = await _authRepository.verificarUsuarioActual();
+        emit(CurrentUserState(userData));
       } catch (e) {
         emit(AuthError(e.toString()));
       }

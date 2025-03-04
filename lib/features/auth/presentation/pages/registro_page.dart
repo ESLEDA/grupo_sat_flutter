@@ -24,12 +24,21 @@ class _RegistroPageState extends State<RegistroPage> {
   
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isRegistering = false;
+  String _errorMessage = '';
 
   String? _validateConfirmPassword(String? value) {
     if (value != _contrasenaController.text) {
       return 'Las contraseñas no coinciden';
     }
     return null;
+  }
+  
+  // Validar correo electrónico mientras se escribe
+  void _checkEmailExistence(String email) {
+    if (AuthValidators.validateEmail(email) == null) {
+      context.read<AuthBloc>().add(CheckEmailExists(email));
+    }
   }
 
   @override
@@ -39,14 +48,47 @@ class _RegistroPageState extends State<RegistroPage> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
+            setState(() {
+              _isRegistering = false;
+              _errorMessage = '';
+            });
+            
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Registro exitoso')),
+              const SnackBar(
+                content: Text('Registro exitoso'),
+                backgroundColor: Colors.green,
+              ),
             );
-            Navigator.pop(context); // Volver a la página de login
+            
+            // Esperar un momento antes de navegar para que el usuario vea el mensaje
+            Future.delayed(const Duration(seconds: 1), () {
+              Navigator.pop(context); // Volver a la página de login
+            });
           } else if (state is AuthError) {
+            setState(() {
+              _isRegistering = false;
+              _errorMessage = state.message;
+            });
+            
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
             );
+          } else if (state is EmailExistsState) {
+            if (state.exists) {
+              setState(() {
+                _errorMessage = 'El correo ya está registrado';
+              });
+              
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('El correo ya está registrado'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            }
           }
         },
         child: CustomScrollView(
@@ -88,6 +130,24 @@ class _RegistroPageState extends State<RegistroPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Mostrar mensaje de error si existe
+                      if (_errorMessage.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Container(
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade100,
+                              borderRadius: BorderRadius.circular(8.0),
+                              border: Border.all(color: Colors.red.shade300),
+                            ),
+                            child: Text(
+                              _errorMessage,
+                              style: TextStyle(color: Colors.red.shade800),
+                            ),
+                          ),
+                        ),
+                      
                       TextFormField(
                         controller: _nombreController,
                         decoration: const InputDecoration(
@@ -187,6 +247,7 @@ class _RegistroPageState extends State<RegistroPage> {
                         ),
                         keyboardType: TextInputType.emailAddress,
                         validator: AuthValidators.validateEmail,
+                        onChanged: _checkEmailExistence,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -269,46 +330,46 @@ class _RegistroPageState extends State<RegistroPage> {
                         validator: _validateConfirmPassword,
                       ),
                       const SizedBox(height: 24),
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          if (state is AuthLoading) {
-                            return const Center(child: CircularProgressIndicator());
-                          }
-                          return ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF193F6E),
-                              foregroundColor: const Color(0xFFF5F8FF),
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
+                      _isRegistering
+                          ? const Center(child: CircularProgressIndicator())
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF193F6E),
+                                foregroundColor: const Color(0xFFF5F8FF),
+                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ),
                               ),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                final empleado = Empleado(
-                                  id: '', // Se generará en Firebase
-                                  nombreEmpleado: _nombreController.text,
-                                  primerApellido: _primerApellidoController.text,
-                                  segundoApellido: _segundoApellidoController.text.isEmpty
-                                      ? null
-                                      : _segundoApellidoController.text,
-                                 contrasena: _contrasenaController.text,
-                                 celular: _celularController.text,
-                                 correo: _correoController.text,
-                               );
-                               context.read<AuthBloc>().add(RegisterEmpleadoRequested(empleado));
-                             }
-                           },
-                           child: const Text(
-                             'Registrar',
-                             style: TextStyle(
-                               fontSize: 16,
-                               fontWeight: FontWeight.bold,
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isRegistering = true;
+                                    _errorMessage = '';
+                                  });
+                                  
+                                  final empleado = Empleado(
+                                    id: '', // Se generará en Firebase
+                                    nombreEmpleado: _nombreController.text,
+                                    primerApellido: _primerApellidoController.text,
+                                    segundoApellido: _segundoApellidoController.text.isEmpty
+                                        ? null
+                                        : _segundoApellidoController.text,
+                                   contrasena: _contrasenaController.text,
+                                   celular: _celularController.text,
+                                   correo: _correoController.text,
+                                 );
+                                 context.read<AuthBloc>().add(RegisterEmpleadoRequested(empleado));
+                               }
+                             },
+                             child: const Text(
+                               'Registrar',
+                               style: TextStyle(
+                                 fontSize: 16,
+                                 fontWeight: FontWeight.bold,
+                               ),
                              ),
-                           ),
-                          );
-                        },
-                      ),
+                            ),
                     ],
                   ),
                 ),

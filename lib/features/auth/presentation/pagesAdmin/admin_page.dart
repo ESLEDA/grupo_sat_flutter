@@ -5,6 +5,7 @@ import 'perfil_page/perfil_administrador.dart';
 import 'marcas_pages/marcas_page.dart';
 import 'almacenes_pages/almacenes_page.dart';
 import 'lista_adm_pages/lista_adm_page.dart';
+import 'lista_empleados.dart'; // Importamos la nueva página
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -171,6 +172,22 @@ class _AdminPageState extends State<AdminPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ListaAdmPage(),
+                  ),
+                );
+              },
+            ),
+            // Botón de Empleados
+            ListTile(
+              leading: const Icon(Icons.badge),
+              title: const Text('Empleados'),
+              onTap: () {
+                // Cerrar el drawer
+                Navigator.pop(context);
+                // Navegar a la página de lista de empleados
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ListaEmpleadosPage(),
                   ),
                 );
               },
