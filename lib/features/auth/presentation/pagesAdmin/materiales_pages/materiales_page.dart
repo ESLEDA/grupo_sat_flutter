@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../features/auth/presentation/bloc/marca_bloc.dart';
 import 'registrar_material_page.dart';
 
 class MaterialesPage extends StatelessWidget {
@@ -13,10 +15,17 @@ class MaterialesPage extends StatelessWidget {
           // Botón para agregar nuevo material
           ElevatedButton.icon(
             onPressed: () {
+              // Cargar las marcas antes de navegar
+              context.read<MarcaBloc>().add(LoadMarcas());
+              
+              // Navegar usando BlocProvider.value para pasar el MarcaBloc
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const RegistrarMaterialPage(),
+                  builder: (context) => BlocProvider.value(
+                    value: BlocProvider.of<MarcaBloc>(context),
+                    child: const RegistrarMaterialPage(),
+                  ),
                 ),
               );
             },
