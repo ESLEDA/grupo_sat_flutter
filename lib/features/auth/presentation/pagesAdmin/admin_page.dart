@@ -5,7 +5,7 @@ import 'perfil_page/perfil_administrador.dart';
 import 'marcas_pages/marcas_page.dart';
 import 'almacenes_pages/almacenes_page.dart';
 import 'lista_adm_pages/lista_adm_page.dart';
-import 'lista_empleados.dart'; // Importamos la nueva página
+import 'lista_empleados/lista_empleados.dart'; // Importamos la nueva página
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
