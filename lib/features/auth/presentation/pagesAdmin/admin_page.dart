@@ -5,7 +5,8 @@ import 'perfil_page/perfil_administrador.dart';
 import 'marcas_pages/marcas_page.dart';
 import 'almacenes_pages/almacenes_page.dart';
 import 'lista_adm_pages/lista_adm_page.dart';
-import 'lista_empleados/lista_empleados.dart'; // Importamos la nueva página
+import 'lista_empleados/lista_empleados.dart';
+import 'materiales_pages/materiales_page.dart'; // Importamos la nueva página de materiales
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -156,6 +157,22 @@ class _AdminPageState extends State<AdminPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const AlmacenesPage(),
+                  ),
+                );
+              },
+            ),
+            // Botón de Materiales (NUEVO)
+            ListTile(
+              leading: const Icon(Icons.inventory),
+              title: const Text('Materiales'),
+              onTap: () {
+                // Cerrar el drawer
+                Navigator.pop(context);
+                // Navegar a la página de materiales
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MaterialesPage(),
                   ),
                 );
               },
