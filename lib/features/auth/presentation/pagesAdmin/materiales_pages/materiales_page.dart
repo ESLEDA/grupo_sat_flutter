@@ -101,7 +101,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
                   });
                 },
                 icon: const Icon(Icons.add),
-                label: const Text('Nuevo Material'),
+                label: const Text('Nuevo Materiall'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF193F6E),
                   foregroundColor: Colors.white,
