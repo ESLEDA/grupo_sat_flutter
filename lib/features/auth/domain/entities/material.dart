@@ -6,6 +6,7 @@ class Material extends Equatable {
   final String marcaMaterial;
   final int cantidadUnidades;
   final Map<String, dynamic> numeroSerie;
+  final String descripcionMaterial; // Nuevo campo agregado
 
   const Material({
     required this.id,
@@ -13,6 +14,7 @@ class Material extends Equatable {
     required this.marcaMaterial,
     required this.cantidadUnidades,
     required this.numeroSerie,
+    required this.descripcionMaterial, // Agregado al constructor
   });
 
   @override
@@ -22,6 +24,7 @@ class Material extends Equatable {
     marcaMaterial,
     cantidadUnidades,
     numeroSerie,
+    descripcionMaterial, // Agregado a los props
   ];
 
   // Factory para crear un Material desde un documento de Firestore
@@ -32,6 +35,7 @@ class Material extends Equatable {
       marcaMaterial: data['marcaMaterial'] ?? '',
       cantidadUnidades: data['cantidadUnidades'] ?? 0,
       numeroSerie: data['numeroSerie'] ?? {},
+      descripcionMaterial: data['descripcionMaterial'] ?? '', // Extraído de Firestore
     );
   }
 
@@ -42,6 +46,7 @@ class Material extends Equatable {
       'marcaMaterial': marcaMaterial,
       'cantidadUnidades': cantidadUnidades,
       'numeroSerie': numeroSerie,
+      'descripcionMaterial': descripcionMaterial, // Incluido en el mapa de Firestore
     };
   }
 }

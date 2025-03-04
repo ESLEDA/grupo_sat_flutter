@@ -15,6 +15,7 @@ class RegistrarMaterialPage extends StatefulWidget {
 class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
   final _formKey = GlobalKey<FormState>();
   final _nombreController = TextEditingController();
+  final _descripcionController = TextEditingController(); // Nuevo controlador para descripción
   String? _marcaSeleccionada; // Cambiado a String para almacenar el ID o nombre de la marca
   final _cantidadController = TextEditingController();
   
@@ -112,6 +113,7 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
         'marcaMaterial': _marcaSeleccionada,
         'cantidadUnidades': cantidad,
         'numeroSerie': numeroSerie,
+        'descripcionMaterial': _descripcionController.text, // Añadido nuevo campo
         'fechaRegistro': Timestamp.now(),
       });
 
@@ -194,6 +196,26 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor ingrese el nombre del material';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                
+                // Descripción del material
+                TextFormField(
+                  controller: _descripcionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Descripción del Material',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                    ),
+                    prefixIcon: Icon(Icons.description),
+                  ),
+                  maxLines: 3, // Permitir múltiples líneas para la descripción
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese una descripción';
                     }
                     return null;
                   },
@@ -382,6 +404,7 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
   @override
   void dispose() {
     _nombreController.dispose();
+    _descripcionController.dispose(); // Limpiar el nuevo controlador
     _cantidadController.dispose();
     super.dispose();
   }
