@@ -159,12 +159,9 @@ class _MarcasPageState extends State<MarcasPage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Marcas'),
+            const Text('Lista de Marcas'),
             const SizedBox(height: 4),
-            const Text(
-              'Gestión de marcas registradas',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-            ),
+            
             const SizedBox(height: 8),
             Row(
               children: [

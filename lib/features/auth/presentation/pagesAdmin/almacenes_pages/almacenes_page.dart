@@ -143,12 +143,8 @@ class _AlmacenesPageState extends State<AlmacenesPage> {
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Almacenes'),
+            Text('Lista de Almacenes'),
             SizedBox(height: 4),
-            Text(
-              'Gestión de almacenes registrados',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-            ),
           ],
         ),
         toolbarHeight: 70, // Reducido para evitar overflow
