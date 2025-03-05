@@ -6,7 +6,8 @@ import 'marcas_pages/marcas_page.dart';
 import 'almacenes_pages/almacenes_page.dart';
 import 'lista_adm_pages/lista_adm_page.dart';
 import 'lista_empleados/lista_empleados.dart';
-import 'materiales_pages/materiales_page.dart'; // Importamos la nueva página de materiales
+import 'materiales_pages/materiales_page.dart'; // Importamos la página de materiales
+import 'materiales_eliminados_page.dart'; // Importamos la nueva página de materiales eliminados
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -161,7 +162,7 @@ class _AdminPageState extends State<AdminPage> {
                 );
               },
             ),
-            // Botón de Materiales (NUEVO)
+            // Botón de Materiales
             ListTile(
               leading: const Icon(Icons.inventory),
               title: const Text('Materiales'),
@@ -173,6 +174,22 @@ class _AdminPageState extends State<AdminPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const MaterialesPage(),
+                  ),
+                );
+              },
+            ),
+            // Botón de Materiales Eliminados (NUEVO)
+            ListTile(
+              leading: const Icon(Icons.delete_outline),
+              title: const Text('Materiales Eliminados'),
+              onTap: () {
+                // Cerrar el drawer
+                Navigator.pop(context);
+                // Navegar a la página de materiales eliminados
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MaterialesEliminadosPage(),
                   ),
                 );
               },
