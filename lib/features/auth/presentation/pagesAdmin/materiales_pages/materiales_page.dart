@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../features/auth/presentation/bloc/marca_bloc.dart';
 import 'registrar_material_page.dart';
+import 'editar_material_page.dart';
 
 class MaterialesPage extends StatefulWidget {
   const MaterialesPage({super.key});
@@ -59,20 +60,20 @@ class _MaterialesPageState extends State<MaterialesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F8FF),
       body: CustomScrollView(
         slivers: [
           // AppBar desplazable
           SliverAppBar(
             title: const Text('Lista de Materiales'),
-            floating: true, // Aparece cuando se desplaza hacia arriba
-            pinned: true, // El título permanece visible al desplazarse
-            snap: true, // Vuelve a aparecer completo cuando se comienza a desplazar hacia arriba
-            expandedHeight: 80, // Altura expandida
+            backgroundColor: const Color(0xFFF5F8FF),
+            floating: true,
+            pinned: true,
+            snap: true,
+            expandedHeight: 80,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 alignment: Alignment.center,
-               
-                
               ),
             ),
           ),
@@ -101,7 +102,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
                   });
                 },
                 icon: const Icon(Icons.add),
-                label: const Text('Nuevo Materiall'),
+                label: const Text('Nuevo Material'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF193F6E),
                   foregroundColor: Colors.white,
@@ -143,54 +144,194 @@ class _MaterialesPageState extends State<MaterialesPage> {
               ),
             )
           else
-            // Lista de cards de materiales
+            // Lista de cards de materiales con nuevo diseño similar a MarcasPage
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final material = _materiales[index];
+                    final nombreMaterial = material['nombreMaterial'] ?? 'Material sin nombre';
                     final cantidad = material['cantidadUnidades'] ?? 0;
                     final marca = material['marcaMaterial'] ?? 'Sin marca';
                     final descripcion = material['descripcionMaterial'] ?? 'Sin descripción';
                     
                     return Card(
                       margin: const EdgeInsets.only(bottom: 16.0),
-                      elevation: 4,
+                      elevation: 4.0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(16.0),
-                        leading: CircleAvatar(
-                          backgroundColor: const Color(0xFF193F6E),
-                          child: Text(
-                            _getInitial(material['nombreMaterial']),
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        title: Text(
-                          material['nombreMaterial'] ?? 'Material sin nombre',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 4),
-                            Text('Marca: $marca'),
-                            Text('Cantidad: $cantidad ${cantidad == 1 ? 'unidad' : 'unidades'}'),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Descripción: $descripcion',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 12),
+                      child: Column(
+                        children: [
+                          // Encabezado de la tarjeta con el nombre del material
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF193F6E),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12.0),
+                                topRight: Radius.circular(12.0),
+                              ),
                             ),
-                          ],
-                        ),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Text(
+                                    _getInitial(nombreMaterial),
+                                    style: const TextStyle(
+                                      color: Color(0xFF193F6E),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12.0),
+                                Expanded(
+                                  child: Text(
+                                    nombreMaterial,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          // Información del material
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.branding_watermark, size: 16, color: Colors.grey),
+                                          const SizedBox(width: 8),
+                                          Text('Marca: $marca'),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.inventory, size: 16, color: Colors.grey),
+                                          const SizedBox(width: 8),
+                                          Text('Cantidad: $cantidad ${cantidad == 1 ? 'unidad' : 'unidades'}'),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Icon(Icons.description, size: 16, color: Colors.grey),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              'Descripción: $descripcion',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          // Botones de acción
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                // Botón de editar - Actualizado para navegar a EditarMaterialPage
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Color(0xFF193F6E)),
+                                  onPressed: () async {
+                                    // Cargar las marcas antes de navegar
+                                    context.read<MarcaBloc>().add(LoadMarcas());
+                                    
+                                    // Navegar a la página de edición
+                                    final resultado = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BlocProvider.value(
+                                          value: BlocProvider.of<MarcaBloc>(context),
+                                          child: EditarMaterialPage(material: material),
+                                        ),
+                                      ),
+                                    );
+                                    
+                                    // Si vuelve con resultado, recargar los materiales
+                                    if (resultado == true) {
+                                      _cargarMateriales();
+                                    }
+                                  },
+                                ),
+                                // Botón de eliminar
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Eliminar material'),
+                                        content: Text('¿Está seguro de eliminar el material $nombreMaterial?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context),
+                                            child: const Text('Cancelar'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              Navigator.pop(context);
+                                              
+                                              try {
+                                                await _firestore.collection('materiales').doc(material['id'].toString()).delete();
+                                                
+                                                if (!mounted) return;
+                                                
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text('Material eliminado con éxito'),
+                                                    backgroundColor: Colors.green,
+                                                  ),
+                                                );
+                                                
+                                                _cargarMateriales();
+                                              } catch (e) {
+                                                if (!mounted) return;
+                                                
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text('Error al eliminar material: $e'),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },
