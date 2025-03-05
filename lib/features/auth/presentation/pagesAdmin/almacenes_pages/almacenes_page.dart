@@ -143,7 +143,7 @@ class _AlmacenesPageState extends State<AlmacenesPage> {
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Lista de Almacenes'),
+            Text('Lista de Almacenesd'),
             SizedBox(height: 4),
           ],
         ),
