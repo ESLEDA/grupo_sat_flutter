@@ -7,6 +7,7 @@ import 'package:printing/printing.dart';
 import '../../bloc/almacen_bloc.dart';
 import '../../../domain/entities/almacen.dart';
 import 'registrar_almacen_page.dart';
+import 'editar_almacen_page.dart';
 
 class AlmacenesPage extends StatefulWidget {
   const AlmacenesPage({super.key});
@@ -345,11 +346,16 @@ class AlmacenCard extends StatelessWidget {
                 // Botón de editar
                 IconButton(
                   icon: const Icon(Icons.edit, color: Color(0xFF193F6E)),
-                  onPressed: () {
-                    // Aquí podríamos implementar la edición
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Edición no implementada aún')),
+                  onPressed: () async {
+                    final resultado = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditarAlmacenPage(almacen: almacen),
+                      ),
                     );
+                    if (resultado != null) {
+                      context.read<AlmacenBloc>().add(LoadAlmacenes());
+                    }
                   },
                 ),
                 // Botón de eliminar
