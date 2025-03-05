@@ -19,10 +19,6 @@ class _RegistrarAlmacenPageState extends State<RegistrarAlmacenPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F8FF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F8FF),
-        title: const Text('Registrar Nuevo Almacén'),
-      ),
       body: BlocListener<AlmacenBloc, AlmacenState>(
         listener: (context, state) {
           if (state is AlmacenOperationSuccess) {
@@ -44,89 +40,115 @@ class _RegistrarAlmacenPageState extends State<RegistrarAlmacenPage> {
             );
           }
         },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Logo o imagen ilustrativa
-                Center(
-                  child: Image.asset(
-                    'assets/images/Logo-SAT.png',
-                    height: 100,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 160.0,
+              floating: false,
+              pinned: true,
+              backgroundColor: const Color(0xFFF5F8FF),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: const Text(
+                  'Registrar Nuevo Almacén',
+                  style: TextStyle(
+                    color: Color(0xFF444957),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
                   ),
                 ),
-                const SizedBox(height: 24),
-                
-                // Nombre del almacén
-                TextFormField(
-                  controller: _nombreAlmacenController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre del Almacén',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                    ),
-                    prefixIcon: Icon(Icons.warehouse, color: Color(0xFF193F6E)),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'El nombre del almacén es requerido';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                
-                // Botón de registro
-                BlocBuilder<AlmacenBloc, AlmacenState>(
-                  builder: (context, state) {
-                    return ElevatedButton.icon(
-                      onPressed: state is AlmacenLoading 
-                          ? null 
-                          : () {
-                              if (_formKey.currentState!.validate()) {
-                                final nuevoAlmacen = Almacen(
-                                  id: '', // Se generará en Firebase
-                                  idAlmacen: 0, // Se autoincrementará en el repositorio
-                                  nombreAlmacen: _nombreAlmacenController.text,
-                                );
-                                
-                                context.read<AlmacenBloc>().add(AddAlmacen(nuevoAlmacen));
-                              }
-                            },
-                      icon: state is AlmacenLoading 
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            ) 
-                          : const Icon(Icons.save),
-                      label: const Text('Registrar Almacén'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF193F6E),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        ),
+                background: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/Logo-SAT.png',
+                        height: 62,
                       ),
-                    );
-                  },
+                      const SizedBox(height: 30),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverToBoxAdapter(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Nombre del almacén
+                      TextFormField(
+                        controller: _nombreAlmacenController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nombre del Almacén',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                          ),
+                          prefixIcon: Icon(Icons.warehouse, color: Color(0xFF193F6E)),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'El nombre del almacén es requerido';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      
+                      // Botón de registro
+                      BlocBuilder<AlmacenBloc, AlmacenState>(
+                        builder: (context, state) {
+                          return ElevatedButton.icon(
+                            onPressed: state is AlmacenLoading 
+                                ? null 
+                                : () {
+                                    if (_formKey.currentState!.validate()) {
+                                      final nuevoAlmacen = Almacen(
+                                        id: '', // Se generará en Firebase
+                                        idAlmacen: 0, // Se autoincrementará en el repositorio
+                                        nombreAlmacen: _nombreAlmacenController.text,
+                                      );
+                                      
+                                      context.read<AlmacenBloc>().add(AddAlmacen(nuevoAlmacen));
+                                    }
+                                  },
+                            icon: state is AlmacenLoading 
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  ) 
+                                : const Icon(Icons.save),
+                            label: const Text('Registrar Almacén'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF193F6E),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
