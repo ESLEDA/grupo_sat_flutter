@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/validators/auth_validators.dart';
 import '../bloc/auth_bloc.dart';
+import 'recuperar_contrasena_page.dart'; // Importación para la página de recuperación
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -230,6 +231,25 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ],
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // En lugar de usar rutas nombradas, usar MaterialPageRoute directamente
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (context) => const RecuperarContrasenaPage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      '¡Olvidé mi contraseña!',
+                      style: TextStyle(
+                        color: Color(0xFF193F6E),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15
+                      ),
+                    ),
                   ),
                 ],
               ),
