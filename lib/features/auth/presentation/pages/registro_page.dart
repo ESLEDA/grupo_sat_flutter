@@ -53,17 +53,17 @@ class _RegistroPageState extends State<RegistroPage> {
               _errorMessage = '';
             });
             
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Registro exitoso'),
-                backgroundColor: Colors.green,
-              ),
-            );
-            
-            // Esperar un momento antes de navegar para que el usuario vea el mensaje
-            Future.delayed(const Duration(seconds: 1), () {
-              Navigator.pop(context); // Volver a la página de login
-            });
+            if (state.userType == 'empleado_registrado') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Registro exitoso, inicia sesión con tus credenciales'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              
+              // Navegar al login inmediatamente
+              Navigator.pushReplacementNamed(context, '/');
+            }
           } else if (state is AuthError) {
             setState(() {
               _isRegistering = false;

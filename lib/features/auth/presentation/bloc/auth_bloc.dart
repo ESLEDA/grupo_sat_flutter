@@ -122,8 +122,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         // Registrar empleado en Firebase
         await _authRepository.registerEmpleado(event.empleado);
+        
+        // Cerrar sesión inmediatamente después del registro
+        await _authRepository.cerrarSesion();
+        
         print("Empleado registrado exitosamente");
-        emit(AuthSuccess('empleado'));
+        emit(AuthSuccess('empleado_registrado'));  // Cambia el tipo para diferenciarlo
       } catch (e) {
         print("Error en el bloc durante registro de empleado: $e");
         emit(AuthError(e.toString()));

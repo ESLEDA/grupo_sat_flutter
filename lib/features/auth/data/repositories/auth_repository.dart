@@ -229,4 +229,15 @@ class AuthRepository {
       };
     }
   }
+  
+  // Método para cerrar sesión
+  Future<void> cerrarSesion() async {
+    try {
+      await _auth.signOut();
+      print("Sesión cerrada correctamente");
+    } catch (e) {
+      print("Error al cerrar sesión: $e");
+      throw Exception('Error al cerrar sesión: $e');
+    }
+  }
 }

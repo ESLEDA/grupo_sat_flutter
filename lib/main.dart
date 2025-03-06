@@ -16,6 +16,7 @@ import 'features/auth/data/repositories/almacen_repository.dart';
 import 'features/auth/data/repositories/material_repository.dart';
 import 'package:flutter/services.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
