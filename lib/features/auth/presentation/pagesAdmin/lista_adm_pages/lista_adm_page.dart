@@ -199,61 +199,72 @@ class _ListaAdmPageState extends State<ListaAdmPage> {
       backgroundColor: const Color(0xFFF5F8FF),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF5F8FF),
-        title: Column(
+        title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Lista de Administradores'),
-            const SizedBox(height: 8),
-            Row(
+            Text('Lista de Administradores'),
+            SizedBox(height: 4),
+          ],
+        ),
+        toolbarHeight: 70, // Altura reducida para que coincida con marcas_page
+      ),
+      body: Column(
+        children: [
+          // Fila de botones, ahora con estilo similar a marcas_page
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
               children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Navegar a la página de registro de administrador
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegistrarAdministradorPage(),
-                      ),
-                    ).then((_) {
-                      // Recargar la lista cuando vuelva
-                      _cargarAdministradores();
-                    });
-                  },
-                  icon: const Icon(CupertinoIcons.person_add),
-                  label: const Text('Añadir Adm'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF193F6E),
-                    foregroundColor: Colors.white,
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // Navegar a la página de registro de administrador
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegistrarAdministradorPage(),
+                        ),
+                      ).then((_) {
+                        // Recargar la lista cuando vuelva
+                        _cargarAdministradores();
+                      });
+                    },
+                    icon: const Icon(CupertinoIcons.person_add),
+                    label: const Text('Añadir Adm'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF193F6E),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
-                ElevatedButton.icon(
-                  onPressed: _isGeneratingPdf ? null : _showPrintPreview,
-                  icon: _isGeneratingPdf 
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Icon(CupertinoIcons.doc_text),
-                  label: const Text('PDF'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD7282F),
-                    foregroundColor: Colors.white,
+                SizedBox(
+                  width: 120, // Ancho fijo para el botón PDF
+                  child: ElevatedButton.icon(
+                    onPressed: _isGeneratingPdf ? null : _showPrintPreview,
+                    icon: _isGeneratingPdf 
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(CupertinoIcons.doc_text),
+                    label: const Text('PDF'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD7282F),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-        toolbarHeight: 110, // Aumentar la altura para acomodar los botones
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
+          ),
+          
           // Lista de administradores
           Expanded(
             child: _isLoading
@@ -282,7 +293,6 @@ class _ListaAdmPageState extends State<ListaAdmPage> {
           ),
         ],
       ),
-      // Ya no necesitamos el FAB porque los botones están en el AppBar
     );
   }
 }
