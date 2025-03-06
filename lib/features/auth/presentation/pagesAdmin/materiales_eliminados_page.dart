@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class MaterialesEliminadosPage extends StatelessWidget {
   const MaterialesEliminadosPage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
