@@ -14,7 +14,13 @@ class _MaterialesEliminadosPageState extends State<MaterialesEliminadosPage> {
   List<Map<String, dynamic>> _materialesEliminados = [];
   String _errorMessage = '';
   
-  
+  // Método seguro para obtener la inicial de un nombre
+  String _getInitial(String? nombre) {
+    if (nombre == null || nombre.isEmpty) {
+      return 'M';
+    }
+    return nombre.substring(0, 1).toUpperCase();
+  }
 
   @override
   void initState() {
@@ -132,7 +138,8 @@ class MaterialEliminadoCard extends StatelessWidget {
       fechaTexto = '${fecha.day}/${fecha.month}/${fecha.year} ${fecha.hour}:${fecha.minute.toString().padLeft(2, '0')}';
     }
 
-    
+    // Obtener la inicial para el avatar
+    final String inicial = nombre.isNotEmpty ? nombre.substring(0, 1).toUpperCase() : 'M';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
@@ -188,8 +195,6 @@ class MaterialEliminadoCard extends StatelessWidget {
                 _buildInfoRow(Icons.branding_watermark, 'Marca', marca),
                 const SizedBox(height: 8),
                 _buildInfoRow(Icons.inventory, 'Cantidad', '$cantidad ${cantidad == 1 ? 'unidad' : 'unidades'}'),
-                const SizedBox(height: 8),
-                _buildInfoRow(Icons.delete_outline, 'Eliminado', fechaTexto),
                 const SizedBox(height: 12),
                 
                 // Descripción
@@ -260,7 +265,7 @@ class MaterialEliminadoCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: seriales.entries.map((entry) {
-        
+        final String unidad = entry.key;
         final Map<String, dynamic> datos = entry.value is Map<String, dynamic> 
             ? entry.value as Map<String, dynamic> 
             : {'serie': 'Desconocido', 'unidad': 'Desconocido'};
