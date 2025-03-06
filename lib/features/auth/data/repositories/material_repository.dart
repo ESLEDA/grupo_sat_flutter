@@ -20,7 +20,6 @@ class MaterialRepository {
   // Registrar un nuevo material
   Future<void> registrarMaterial(Material material) async {
     try {
-      // Guardar en Firestore
       await _firestore.collection('materiales').add(material.toFirestore());
     } catch (e) {
       throw Exception('Error al registrar material: $e');
@@ -39,15 +38,19 @@ class MaterialRepository {
     }
   }
 
-  // Eliminar un material
-  Future<void> eliminarMaterial(String materialId) async {
+  // Mover material a la colección de materiales eliminados y eliminar de materiales
+  Future<void> moverMaterialAEliminados(Material material) async {
     try {
-      await _firestore.collection('materiales').doc(materialId).delete();
+      Map<String, dynamic> materialData = material.toFirestore();
+      materialData.remove('fecha'); // Eliminar la fecha antes de moverlo
+      
+      await _firestore.collection('materialesEliminados').doc(material.id).set(materialData);
+      await _firestore.collection('materiales').doc(material.id).delete();
     } catch (e) {
-      throw Exception('Error al eliminar material: $e');
+      throw Exception('Error al mover material a eliminados: $e');
     }
   }
-  
+
   // Obtener un material por su ID
   Future<Material?> getMaterialById(String materialId) async {
     try {

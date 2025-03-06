@@ -30,12 +30,12 @@ class UpdateMaterial extends MaterialEvent {
 }
 
 class DeleteMaterial extends MaterialEvent {
-  final String materialId;
+  final Material material;
 
-  DeleteMaterial(this.materialId);
+  DeleteMaterial(this.material);
 
   @override
-  List<Object?> get props => [materialId];
+  List<Object?> get props => [material];
 }
 
 // States
@@ -72,7 +72,6 @@ class MaterialBloc extends Bloc<MaterialEvent, MaterialState> {
     on<LoadMateriales>((event, emit) async {
       emit(MaterialLoading());
       try {
-        // Para usar el stream, convertimos a una lista en memoria
         final materiales = await _materialRepository.getMateriales().first;
         emit(MaterialesLoaded(materiales));
       } catch (e) {
@@ -85,7 +84,7 @@ class MaterialBloc extends Bloc<MaterialEvent, MaterialState> {
       try {
         await _materialRepository.registrarMaterial(event.material);
         emit(MaterialOperationSuccess());
-        add(LoadMateriales()); // Recargar la lista de materiales
+        add(LoadMateriales());
       } catch (e) {
         emit(MaterialOperationFailure('Error al agregar material: $e'));
       }
@@ -96,7 +95,7 @@ class MaterialBloc extends Bloc<MaterialEvent, MaterialState> {
       try {
         await _materialRepository.actualizarMaterial(event.material);
         emit(MaterialOperationSuccess());
-        add(LoadMateriales()); // Recargar la lista de materiales
+        add(LoadMateriales());
       } catch (e) {
         emit(MaterialOperationFailure('Error al actualizar material: $e'));
       }
@@ -105,9 +104,9 @@ class MaterialBloc extends Bloc<MaterialEvent, MaterialState> {
     on<DeleteMaterial>((event, emit) async {
       emit(MaterialLoading());
       try {
-        await _materialRepository.eliminarMaterial(event.materialId);
+        await _materialRepository.moverMaterialAEliminados(event.material);
         emit(MaterialOperationSuccess());
-        add(LoadMateriales()); // Recargar la lista de materiales
+        add(LoadMateriales());
       } catch (e) {
         emit(MaterialOperationFailure('Error al eliminar material: $e'));
       }
