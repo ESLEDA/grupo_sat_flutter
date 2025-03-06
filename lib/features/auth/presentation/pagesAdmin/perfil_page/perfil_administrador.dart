@@ -17,12 +17,19 @@ class _PerfilAdministradorPageState extends State<PerfilAdministradorPage> {
   final _segundoApellidoController = TextEditingController();
   final _celularController = TextEditingController();
   final _correoController = TextEditingController();
+  final _nuevaContrasenaController = TextEditingController();
+  final _confirmarContrasenaController = TextEditingController();
+  final _contrasenaActualController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   
   bool _isLoading = true;
   bool _isSaving = false;
+  bool _mostrarNuevaContrasena = false;
+  bool _mostrarConfirmarContrasena = false;
+  bool _mostrarContrasenaActual = false;
+  bool _requiereReautenticacion = false;
 
   @override
   void initState() {
@@ -65,6 +72,101 @@ class _PerfilAdministradorPageState extends State<PerfilAdministradorPage> {
     }
   }
 
+  // Método para solicitar la contraseña actual para reautenticación
+  Future<bool> _solicitarContrasenaActual() async {
+    _contrasenaActualController.clear();
+    
+    return await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Confirmar contraseña'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Para actualizar tu información, por favor confirma tu contraseña actual.',
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _contrasenaActualController,
+                    obscureText: !_mostrarContrasenaActual,
+                    decoration: InputDecoration(
+                      labelText: 'Contraseña actual',
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _mostrarContrasenaActual ? Icons.visibility : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setDialogState(() {
+                            _mostrarContrasenaActual = !_mostrarContrasenaActual;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Confirmar'),
+                ),
+              ],
+            );
+          }
+        );
+      },
+    ) ?? false;
+  }
+
+  Future<void> _reautenticarUsuario() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null && user.email != null) {
+        // Crear credenciales con el email actual y la contraseña proporcionada
+        final credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: _contrasenaActualController.text,
+        );
+        
+        // Reautenticar al usuario
+        await user.reauthenticateWithCredential(credential);
+        
+        // Si llegamos aquí, la reautenticación fue exitosa
+        setState(() {
+          _requiereReautenticacion = false;
+        });
+        
+        return;
+      }
+    } catch (e) {
+      // Mostrar error de reautenticación
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La contraseña actual es incorrecta. Por favor intente nuevamente.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      
+      // Mantener la bandera de reautenticación requerida
+      setState(() {
+        _requiereReautenticacion = true;
+      });
+      
+      // Lanzar excepción para que el método que llama sepa que falló
+      throw Exception('Reautenticación fallida');
+    }
+  }
+
   Future<void> _guardarCambios() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -77,8 +179,55 @@ class _PerfilAdministradorPageState extends State<PerfilAdministradorPage> {
     try {
       final User? user = _auth.currentUser;
       if (user != null) {
-        // Verificar si el correo ha cambiado
+        // Verificar si se requiere una acción que necesita reautenticación
         final bool correoModificado = user.email != _correoController.text;
+        final bool cambiaContrasena = _nuevaContrasenaController.text.isNotEmpty;
+        
+        // Si se cambia correo o contraseña, verificar si necesitamos reautenticar
+        if ((correoModificado || cambiaContrasena) && _requiereReautenticacion == false) {
+          try {
+            // Intentar operación sensible para ver si requiere reautenticación
+            if (cambiaContrasena) {
+              await user.updatePassword(_nuevaContrasenaController.text);
+            } else if (correoModificado) {
+              await user.updateEmail(_correoController.text);
+            }
+          } catch (e) {
+            // Si obtenemos un error de reautenticación requerida
+            if (e is FirebaseAuthException && 
+                (e.code == 'requires-recent-login' || e.code == 'user-token-expired')) {
+              setState(() {
+                _requiereReautenticacion = true;
+              });
+              
+              // Solicitar contraseña actual
+              final continuar = await _solicitarContrasenaActual();
+              if (!continuar) {
+                setState(() {
+                  _isSaving = false;
+                });
+                return;
+              }
+              
+              // Reautenticar al usuario
+              await _reautenticarUsuario();
+            } else {
+              throw e; // Otro tipo de error, relanzar
+            }
+          }
+        } else if (_requiereReautenticacion) {
+          // Si ya sabemos que se requiere reautenticación
+          final continuar = await _solicitarContrasenaActual();
+          if (!continuar) {
+            setState(() {
+              _isSaving = false;
+            });
+            return;
+          }
+          
+          // Reautenticar al usuario
+          await _reautenticarUsuario();
+        }
         
         // Actualizar datos en Firestore
         await _firestore.collection('administradores').doc(user.uid).update({
@@ -95,19 +244,39 @@ class _PerfilAdministradorPageState extends State<PerfilAdministradorPage> {
         if (correoModificado) {
           await user.updateEmail(_correoController.text);
         }
+        
+        // Si el usuario ingresó una nueva contraseña, actualizarla
+        if (cambiaContrasena) {
+          await user.updatePassword(_nuevaContrasenaController.text);
+          // Limpiar los campos de contraseña después de actualizar
+          _nuevaContrasenaController.clear();
+          _confirmarContrasenaController.clear();
+        }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Perfil actualizado correctamente')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Perfil actualizado correctamente'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al actualizar datos: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al actualizar datos: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
-      setState(() {
-        _isSaving = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
     }
   }
 
@@ -245,6 +414,130 @@ class _PerfilAdministradorPageState extends State<PerfilAdministradorPage> {
                     ),
                     const SizedBox(height: 24),
                     
+                    // Sección de cambio de contraseña
+                    const Text(
+                      'Cambiar Contraseña (opcional)',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Campo para nueva contraseña
+                    TextFormField(
+                      controller: _nuevaContrasenaController,
+                      decoration: InputDecoration(
+                        labelText: 'Nueva Contraseña',
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                        ),
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _mostrarNuevaContrasena ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarNuevaContrasena = !_mostrarNuevaContrasena;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: !_mostrarNuevaContrasena,
+                      validator: (value) {
+                        // Validar solo si hay algo escrito, ya que es opcional
+                        if (value == null || value.isEmpty) {
+                          return null; // No requiere validación si está vacío
+                        }
+                        return AuthValidators.validatePassword(value);
+                      },
+                      onChanged: (value) {
+                        // Forzar actualización de UI para mostrar/ocultar requisitos
+                        setState(() {});
+                      },
+                    ),
+                    
+                    // Mostrar requisitos de contraseña si hay texto
+                    Visibility(
+                      visible: _nuevaContrasenaController.text.isNotEmpty,
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 12, top: 8),
+                        child: const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('La contraseña debe cumplir con los siguientes requisitos:',
+                                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            SizedBox(height: 4),
+                            Text('• Debe contener al menos 8 caracteres.',
+                                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Text('• Debe contener al menos un número.',
+                                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Text('• Debe contener al menos una letra mayúscula.',
+                                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Text('• Debe contener al menos un carácter especial (#,%,&,+).',
+                                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Campo para confirmar contraseña (visible solo si se está cambiando)
+                    Visibility(
+                      visible: _nuevaContrasenaController.text.isNotEmpty,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _confirmarContrasenaController,
+                            decoration: InputDecoration(
+                              labelText: 'Confirmar Nueva Contraseña',
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                              ),
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _mostrarConfirmarContrasena ? Icons.visibility : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _mostrarConfirmarContrasena = !_mostrarConfirmarContrasena;
+                                  });
+                                },
+                              ),
+                            ),
+                            obscureText: !_mostrarConfirmarContrasena,
+                            validator: (value) {
+                              if (_nuevaContrasenaController.text.isEmpty) {
+                                return null; // No validar si no hay nueva contraseña
+                              }
+                              if (value == null || value.isEmpty) {
+                                return 'Debe confirmar la nueva contraseña';
+                              }
+                              if (value != _nuevaContrasenaController.text) {
+                                return 'Las contraseñas no coinciden';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                    
                     // Botón de guardar cambios
                     ElevatedButton.icon(
                       onPressed: _isSaving ? null : _guardarCambios,
@@ -282,6 +575,9 @@ class _PerfilAdministradorPageState extends State<PerfilAdministradorPage> {
     _segundoApellidoController.dispose();
     _celularController.dispose();
     _correoController.dispose();
+    _nuevaContrasenaController.dispose();
+    _confirmarContrasenaController.dispose();
+    _contrasenaActualController.dispose();
     super.dispose();
   }
 }
