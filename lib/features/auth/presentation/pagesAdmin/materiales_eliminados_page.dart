@@ -129,17 +129,17 @@ class MaterialEliminadoCard extends StatelessWidget {
     final String marca = material['marcaMaterial'] ?? 'Sin marca';
     final int cantidad = material['cantidadUnidades'] ?? 0;
     final String descripcion = material['descripcionMaterial'] ?? 'Sin descripción';
-    final Timestamp? fechaEliminacion = material['fechaEliminacion'] as Timestamp?;
+    //final Timestamp? fechaEliminacion = material['fechaEliminacion'] as Timestamp?;
     
     // Formatear la fecha si existe
-    String fechaTexto = 'Fecha desconocida';
-    if (fechaEliminacion != null) {
-      final fecha = fechaEliminacion.toDate();
-      fechaTexto = '${fecha.day}/${fecha.month}/${fecha.year} ${fecha.hour}:${fecha.minute.toString().padLeft(2, '0')}';
-    }
+    //String fechaTexto = 'Fecha desconocida';
+    //if (fechaEliminacion != null) {
+    //  final fecha = fechaEliminacion.toDate();
+    //  fechaTexto = '${fecha.day}/${fecha.month}/${fecha.year} ${fecha.hour}:${fecha.minute.toString().padLeft(2, '0')}';
+    //}
 
     // Obtener la inicial para el avatar
-    final String inicial = nombre.isNotEmpty ? nombre.substring(0, 1).toUpperCase() : 'M';
+    //final String inicial = nombre.isNotEmpty ? nombre.substring(0, 1).toUpperCase() : 'M';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
@@ -265,7 +265,7 @@ class MaterialEliminadoCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: seriales.entries.map((entry) {
-        final String unidad = entry.key;
+        //final String unidad = entry.key;
         final Map<String, dynamic> datos = entry.value is Map<String, dynamic> 
             ? entry.value as Map<String, dynamic> 
             : {'serie': 'Desconocido', 'unidad': 'Desconocido'};
