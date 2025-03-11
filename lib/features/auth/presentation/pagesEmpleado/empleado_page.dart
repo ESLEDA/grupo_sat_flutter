@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'perfil_empleado.dart';
+import 'prestar_material_page.dart'; // Importar la nueva página
 
 class EmpleadoPage extends StatefulWidget {
   const EmpleadoPage({super.key});
@@ -123,6 +124,22 @@ class _EmpleadoPageState extends State<EmpleadoPage> {
                   ),
                 ],
               ),
+            ),
+            // Botón de Prestar Material 
+            ListTile(
+              leading: const Icon(Icons.inventory),
+              title: const Text('Prestar Material'),
+              onTap: () {
+                // Cerrar el drawer
+                Navigator.pop(context);
+                // Navegar a la página de préstamo de material
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrestarMaterialPage(),
+                  ),
+                );
+              },
             ),
             // Botón de Mi Perfil
             ListTile(
