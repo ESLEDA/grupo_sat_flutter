@@ -5,6 +5,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../../../../../features/auth/presentation/bloc/material_bloc.dart' as material_bloc;
+import '../../../../../features/auth/presentation/bloc/almacen_bloc.dart';
+import '../../../../../features/auth/domain/entities/almacen.dart';
 import 'registrar_material_page.dart';
 import 'editar_material_page.dart';
 import '../../../domain/entities/material.dart' as app_material;
@@ -18,16 +20,25 @@ class MaterialesPage extends StatefulWidget {
 
 class _MaterialesPageState extends State<MaterialesPage> {
   bool _isGeneratingPdf = false;
+  String? _almacenSeleccionado; // Para filtrar materiales por almacén
+  List<Almacen> _listaAlmacenes = []; // Lista de almacenes disponibles
+  bool _isCargandoAlmacenes = true;
 
   @override
   void initState() {
     super.initState();
     context.read<material_bloc.MaterialBloc>().add(material_bloc.LoadMateriales());
+    context.read<AlmacenBloc>().add(LoadAlmacenes()); // Cargar almacenes
   }
 
   // Método para generar el PDF con la lista de materiales
   pw.Document _generatePdfDocument(List<app_material.Material> materiales) {
     final pdf = pw.Document();
+
+    // Filtrar materiales por almacén si hay uno seleccionado
+    final materialesFiltrados = _almacenSeleccionado != null
+        ? materiales.where((m) => m.almacen == _almacenSeleccionado).toList()
+        : materiales;
 
     pdf.addPage(
       pw.Page(
@@ -38,7 +49,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
             children: [
               pw.Header(
                 level: 0,
-                child: pw.Text('Lista de Materiales'),
+                child: pw.Text('Lista de Materiales' + (_almacenSeleccionado != null ? ' - Almacén: $_almacenSeleccionado' : '')),
               ),
               pw.SizedBox(height: 20),
               pw.Table(
@@ -62,10 +73,14 @@ class _MaterialesPageState extends State<MaterialesPage> {
                         padding: const pw.EdgeInsets.all(8.0),
                         child: pw.Text('Cantidad', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                       ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8.0),
+                        child: pw.Text('Almacén', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
                     ],
                   ),
-                  // Filas de la tabla con los materiales
-                  ...materiales.map((material) {
+                  // Filas de la tabla con los materiales filtrados
+                  ...materialesFiltrados.map((material) {
                     return pw.TableRow(
                       children: [
                         pw.Padding(
@@ -79,6 +94,10 @@ class _MaterialesPageState extends State<MaterialesPage> {
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
                           child: pw.Text(material.cantidadUnidades.toString()),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8.0),
+                          child: pw.Text(material.almacen),
                         ),
                       ],
                     );
@@ -227,6 +246,56 @@ class _MaterialesPageState extends State<MaterialesPage> {
             ),
           ),
           
+          // Selector de almacén
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: BlocListener<AlmacenBloc, AlmacenState>(
+              listener: (context, state) {
+                if (state is AlmacenesLoaded) {
+                  setState(() {
+                    _listaAlmacenes = state.almacenes;
+                    _isCargandoAlmacenes = false;
+                  });
+                }
+              },
+              child: _isCargandoAlmacenes
+                  ? const Center(child: CircularProgressIndicator())
+                  : Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(18.0),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String?>(
+                          isExpanded: true,
+                          value: _almacenSeleccionado,
+                          hint: const Text('Seleccionar almacén'),
+                          iconEnabledColor: const Color(0xFF193F6E),
+                          items: [
+                            const DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text('Todos los almacenes'),
+                            ),
+                            ..._listaAlmacenes.map((almacen) {
+                              return DropdownMenuItem<String?>(
+                                value: almacen.nombreAlmacen,
+                                child: Text(almacen.nombreAlmacen),
+                              );
+                            }).toList(),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _almacenSeleccionado = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+            ),
+          ),
+          
           // Contenido principal
           Expanded(
             child: BlocBuilder<material_bloc.MaterialBloc, material_bloc.MaterialState>(
@@ -236,11 +305,18 @@ class _MaterialesPageState extends State<MaterialesPage> {
                 } else if (state is material_bloc.MaterialesLoaded) {
                   final materiales = state.materiales;
                   
-                  return materiales.isEmpty
-                      ? const Center(
+                  // Filtrar materiales por almacén si hay uno seleccionado
+                  final materialesFiltrados = _almacenSeleccionado != null
+                      ? materiales.where((m) => m.almacen == _almacenSeleccionado).toList()
+                      : materiales;
+                  
+                  return materialesFiltrados.isEmpty
+                      ? Center(
                           child: Text(
-                            'No hay materiales registrados',
-                            style: TextStyle(
+                            _almacenSeleccionado == null
+                                ? 'No hay materiales registrados'
+                                : 'No hay materiales en el almacén $_almacenSeleccionado',
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
                             ),
@@ -253,9 +329,9 @@ class _MaterialesPageState extends State<MaterialesPage> {
                           },
                           child: ListView.builder(
                             padding: const EdgeInsets.all(16.0),
-                            itemCount: materiales.length,
+                            itemCount: materialesFiltrados.length,
                             itemBuilder: (context, index) {
-                              final material = materiales[index];
+                              final material = materialesFiltrados[index];
                               return MaterialCard(material: material);
                             },
                           ),
@@ -345,6 +421,14 @@ class MaterialCard extends StatelessWidget {
                           const Icon(Icons.numbers, size: 16, color: Colors.grey),
                           const SizedBox(width: 8),
                           Text('Cantidad: ${material.cantidadUnidades} unidades'),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.warehouse, size: 16, color: Colors.grey),
+                          const SizedBox(width: 8),
+                          Text('Almacén: ${material.almacen}'),
                         ],
                       ),
                     ],

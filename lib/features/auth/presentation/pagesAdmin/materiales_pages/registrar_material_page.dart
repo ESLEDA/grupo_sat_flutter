@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../features/auth/presentation/bloc/marca_bloc.dart';
+import '../../../../../features/auth/presentation/bloc/almacen_bloc.dart';
 import '../../../../../features/auth/domain/entities/marca.dart';
+import '../../../../../features/auth/domain/entities/almacen.dart';
 import 'material_serie_item.dart';
 
 class RegistrarMaterialPage extends StatefulWidget {
@@ -15,8 +17,9 @@ class RegistrarMaterialPage extends StatefulWidget {
 class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
   final _formKey = GlobalKey<FormState>();
   final _nombreController = TextEditingController();
-  final _descripcionController = TextEditingController(); // Nuevo controlador para descripción
-  String? _marcaSeleccionada; // Cambiado a String para almacenar el ID o nombre de la marca
+  final _descripcionController = TextEditingController();
+  String? _marcaSeleccionada;
+  String? _almacenSeleccionado; // Nuevo campo para almacén seleccionado
   final _cantidadController = TextEditingController();
   
   // Lista para manejar los números de serie
@@ -24,8 +27,10 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
   
   bool _isLoading = false;
   bool _isCargandoMarcas = true;
+  bool _isCargandoAlmacenes = true; // Nuevo flag para almacenes
   String _errorMessage = '';
   List<Marca> _listaMarcas = [];
+  List<Almacen> _listaAlmacenes = []; // Nueva lista para almacenes
 
   @override
   void initState() {
@@ -33,13 +38,19 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
     // Inicialmente agregamos un item para que el usuario pueda agregar al menos un número de serie
     _serieItems.add(MaterialSerieItem(index: 0, onRemove: _removerSerieItem));
     
-    // Cargar las marcas al iniciar
+    // Cargar las marcas y almacenes al iniciar
     _cargarMarcas();
+    _cargarAlmacenes();
   }
   
   void _cargarMarcas() {
     // Usar el BLoC para cargar las marcas
     context.read<MarcaBloc>().add(LoadMarcas());
+  }
+  
+  void _cargarAlmacenes() {
+    // Usar el BLoC para cargar los almacenes
+    context.read<AlmacenBloc>().add(LoadAlmacenes());
   }
   
   void _agregarSerieItem() {
@@ -74,10 +85,17 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
       return;
     }
     
-    // Validación de marca seleccionada
+    // Validación de marca y almacén seleccionados
     if (_marcaSeleccionada == null) {
       setState(() {
         _errorMessage = 'Por favor seleccione una marca';
+      });
+      return;
+    }
+    
+    if (_almacenSeleccionado == null) {
+      setState(() {
+        _errorMessage = 'Por favor seleccione un almacén';
       });
       return;
     }
@@ -113,7 +131,8 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
         'marcaMaterial': _marcaSeleccionada,
         'cantidadUnidades': cantidad,
         'numeroSerie': numeroSerie,
-        'descripcionMaterial': _descripcionController.text, // Añadido nuevo campo
+        'descripcionMaterial': _descripcionController.text,
+        'almacen': _almacenSeleccionado, // Nuevo campo para almacén
         'fechaRegistro': Timestamp.now(),
       });
 
@@ -147,20 +166,39 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
       appBar: AppBar(
         title: const Text('Registrar Material'),
       ),
-      body: BlocListener<MarcaBloc, MarcaState>(
-        listener: (context, state) {
-          if (state is MarcasLoaded) {
-            setState(() {
-              _listaMarcas = state.marcas;
-              _isCargandoMarcas = false;
-            });
-          } else if (state is MarcaOperationFailure) {
-            setState(() {
-              _isCargandoMarcas = false;
-              _errorMessage = state.message;
-            });
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<MarcaBloc, MarcaState>(
+            listener: (context, state) {
+              if (state is MarcasLoaded) {
+                setState(() {
+                  _listaMarcas = state.marcas;
+                  _isCargandoMarcas = false;
+                });
+              } else if (state is MarcaOperationFailure) {
+                setState(() {
+                  _isCargandoMarcas = false;
+                  _errorMessage = state.message;
+                });
+              }
+            },
+          ),
+          BlocListener<AlmacenBloc, AlmacenState>(
+            listener: (context, state) {
+              if (state is AlmacenesLoaded) {
+                setState(() {
+                  _listaAlmacenes = state.almacenes;
+                  _isCargandoAlmacenes = false;
+                });
+              } else if (state is AlmacenOperationFailure) {
+                setState(() {
+                  _isCargandoAlmacenes = false;
+                  _errorMessage = state.message;
+                });
+              }
+            },
+          ),
+        ],
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -218,6 +256,81 @@ class _RegistrarMaterialPageState extends State<RegistrarMaterialPage> {
                       return 'Por favor ingrese una descripción';
                     }
                     return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                
+                // Dropdown para seleccionar almacén
+                BlocBuilder<AlmacenBloc, AlmacenState>(
+                  builder: (context, state) {
+                    if (state is AlmacenLoading || _isCargandoAlmacenes) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (state is AlmacenesLoaded || _listaAlmacenes.isNotEmpty) {
+                      // Si no hay almacenes, mostrar mensaje
+                      if (_listaAlmacenes.isEmpty) {
+                        return Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: const Text('No hay almacenes disponibles. Por favor, registre un almacén primero.'),
+                        );
+                      }
+                      
+                      // Dropdown con los almacenes disponibles
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              prefixIcon: Icon(Icons.warehouse),
+                              labelText: 'Seleccionar Almacén',
+                            ),
+                            hint: const Text('Seleccionar Almacén'),
+                            value: _almacenSeleccionado,
+                            items: _listaAlmacenes.map((almacen) {
+                              return DropdownMenuItem<String>(
+                                value: almacen.nombreAlmacen,
+                                child: Text(almacen.nombreAlmacen),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _almacenSeleccionado = value;
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor seleccione un almacén';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      // Si hay un error o no se pudo cargar los almacenes, mostrar un mensaje
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: const Text('Error al cargar los almacenes. Intente nuevamente.'),
+                      );
+                    }
                   },
                 ),
                 const SizedBox(height: 16),
