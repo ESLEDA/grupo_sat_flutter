@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../bloc/almacen_bloc.dart';
 import '../../../domain/entities/almacen.dart';
 import 'registrar_almacen_page.dart';
@@ -87,8 +89,8 @@ class _AlmacenesPageState extends State<AlmacenesPage> {
     return pdf;
   }
 
-  // Mostrar vista previa del PDF para imprimir o guardar
-  Future<void> _showPrintPreview(List<Almacen> almacenes) async {
+  // Generar y compartir el PDF
+  Future<void> _generateAndSharePdf(List<Almacen> almacenes) async {
     if (_isGeneratingPdf) return;
     
     setState(() {
@@ -97,27 +99,20 @@ class _AlmacenesPageState extends State<AlmacenesPage> {
 
     try {
       final pdf = _generatePdfDocument(almacenes);
-      final pdfBytes = await pdf.save();
-
+      final directory = await getApplicationDocumentsDirectory();
+      final fileName = 'almacenes_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final file = File('${directory.path}/$fileName');
+      
+      // Guardar el PDF en el almacenamiento
+      await file.writeAsBytes(await pdf.save());
+      
       if (!mounted) return;
 
-      // Navegamos a una pantalla nueva para mostrar la vista previa e imprimir
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Scaffold(
-            appBar: AppBar(
-              title: const Text('Vista previa de almacenes'),
-            ),
-            body: PdfPreview(
-              build: (format) => pdfBytes,
-              allowPrinting: true,
-              allowSharing: true,
-              canChangeOrientation: false,
-              canChangePageFormat: false,
-              initialPageFormat: PdfPageFormat.a4,
-            ),
-          ),
-        ),
+      // Mostrar opciones para compartir el PDF
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: 'Lista de Almacenes',
+        text: 'Compartir PDF de almacenes'
       );
     } catch (e) {
       if (!mounted) return;
@@ -186,7 +181,7 @@ class _AlmacenesPageState extends State<AlmacenesPage> {
                     builder: (context, state) {
                       return ElevatedButton.icon(
                         onPressed: (state is AlmacenesLoaded && !_isGeneratingPdf) 
-                            ? () => _showPrintPreview(state.almacenes)
+                            ? () => _generateAndSharePdf(state.almacenes)
                             : null,
                         icon: _isGeneratingPdf 
                           ? const SizedBox(
@@ -197,7 +192,7 @@ class _AlmacenesPageState extends State<AlmacenesPage> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Icon(CupertinoIcons.doc_text),
+                          : const Icon(CupertinoIcons.share),
                         label: const Text('PDF'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFD7282F),

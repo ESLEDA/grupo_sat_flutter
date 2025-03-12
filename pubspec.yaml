@@ -17,11 +17,15 @@ dependencies:
   dartz: ^0.10.1
   equatable: ^2.0.5
   flutter_bloc: ^8.1.4
-  printing: ^5.13.1
   pdf: ^3.11.3
   cupertino_icons: ^1.0.8
-  firebase_dynamic_links: ^5.3.6 #eliminar si no fnciona recuperar contraseña
+  #firebase_dynamic_links: ^5.3.6 #eliminar si no fnciona recuperar contraseña
   intl: ^0.20.2
+  #printing: ^5.13.1
+  path_provider: ^2.1.5
+  share_plus: ^10.0.0
+  
+  
   
   
   

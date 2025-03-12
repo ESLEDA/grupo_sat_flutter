@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/validators/auth_validators.dart';
 import '../bloc/auth_bloc.dart';
-import 'pasword/recuperar_contrasena_page.dart'; // Importación para la página de recuperación
+//import 'pasword/recuperar_contrasena_page.dart'; // Importación para la página de recuperación
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

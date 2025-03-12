@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../bloc/marca_bloc.dart';
 import '../../../domain/entities/marca.dart';
 import 'registrar_marca_page.dart';
@@ -102,8 +104,8 @@ class _MarcasPageState extends State<MarcasPage> {
     return pdf;
   }
 
-  // Mostrar vista previa del PDF para imprimir o guardar
-  Future<void> _showPrintPreview(List<Marca> marcas) async {
+  // Generar y guardar el PDF, luego mostrar opciones para compartir
+  Future<void> _generateAndSharePdf(List<Marca> marcas) async {
     if (_isGeneratingPdf) return;
     
     setState(() {
@@ -112,27 +114,20 @@ class _MarcasPageState extends State<MarcasPage> {
 
     try {
       final pdf = _generatePdfDocument(marcas);
-      final pdfBytes = await pdf.save();
-
+      final directory = await getApplicationDocumentsDirectory();
+      final fileName = 'marcas_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final file = File('${directory.path}/$fileName');
+      
+      // Guardar el PDF en el almacenamiento
+      await file.writeAsBytes(await pdf.save());
+      
       if (!mounted) return;
 
-      // Navegamos a una pantalla nueva para mostrar la vista previa e imprimir
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Scaffold(
-            appBar: AppBar(
-              title: const Text('Vista previa de marcas'),
-            ),
-            body: PdfPreview(
-              build: (format) => pdfBytes,
-              allowPrinting: true,
-              allowSharing: true,
-              canChangeOrientation: false,
-              canChangePageFormat: false,
-              initialPageFormat: PdfPageFormat.a4,
-            ),
-          ),
-        ),
+      // Mostrar opciones para compartir el PDF
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: 'Lista de Marcas',
+        text: 'Compartir PDF de marcas'
       );
     } catch (e) {
       if (!mounted) return;
@@ -201,7 +196,7 @@ class _MarcasPageState extends State<MarcasPage> {
                     builder: (context, state) {
                       return ElevatedButton.icon(
                         onPressed: (state is MarcasLoaded && !_isGeneratingPdf) 
-                            ? () => _showPrintPreview(state.marcas)
+                            ? () => _generateAndSharePdf(state.marcas)
                             : null,
                         icon: _isGeneratingPdf 
                           ? const SizedBox(
@@ -212,7 +207,7 @@ class _MarcasPageState extends State<MarcasPage> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Icon(CupertinoIcons.doc_text),
+                          : const Icon(CupertinoIcons.share),
                         label: const Text('PDF'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFD7282F),

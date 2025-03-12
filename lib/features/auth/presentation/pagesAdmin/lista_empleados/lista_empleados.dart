@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ListaEmpleadosPage extends StatefulWidget {
   const ListaEmpleadosPage({super.key});
@@ -144,8 +146,8 @@ class _ListaEmpleadosPageState extends State<ListaEmpleadosPage> {
     return pdf;
   }
 
-  // Muestra el diálogo para previsualizar e imprimir o guardar PDF
-  Future<void> _showPrintPreview() async {
+  // Generar y compartir el PDF
+  Future<void> _generateAndSharePdf() async {
     if (_isGeneratingPdf) return;
     
     setState(() {
@@ -154,27 +156,20 @@ class _ListaEmpleadosPageState extends State<ListaEmpleadosPage> {
 
     try {
       final pdf = _generatePdfDocument();
-      final pdfBytes = await pdf.save();
-
+      final directory = await getApplicationDocumentsDirectory();
+      final fileName = 'empleados_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final file = File('${directory.path}/$fileName');
+      
+      // Guardar el PDF en el almacenamiento
+      await file.writeAsBytes(await pdf.save());
+      
       if (!mounted) return;
 
-      // Navegamos a una pantalla nueva para mostrar la vista previa e imprimir
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Scaffold(
-            appBar: AppBar(
-              title: const Text('Vista previa de la lista'),
-            ),
-            body: PdfPreview(
-              build: (format) => pdfBytes,
-              allowPrinting: true,
-              allowSharing: true,
-              canChangeOrientation: false,
-              canChangePageFormat: false,
-              initialPageFormat: PdfPageFormat.a4,
-            ),
-          ),
-        ),
+      // Mostrar opciones para compartir el PDF
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: 'Lista de Empleados',
+        text: 'Compartir PDF de empleados'
       );
     } catch (e) {
       if (!mounted) return;
@@ -204,7 +199,7 @@ class _ListaEmpleadosPageState extends State<ListaEmpleadosPage> {
             const Text('Lista de Empleados'),
             const SizedBox(height: 8),
             ElevatedButton.icon(
-              onPressed: _isGeneratingPdf ? null : _showPrintPreview,
+              onPressed: _isGeneratingPdf ? null : _generateAndSharePdf,
               icon: _isGeneratingPdf 
                 ? const SizedBox(
                     width: 16,
@@ -214,7 +209,7 @@ class _ListaEmpleadosPageState extends State<ListaEmpleadosPage> {
                       color: Colors.white,
                     ),
                   )
-                : const Icon(CupertinoIcons.doc_text),
+                : const Icon(CupertinoIcons.share),
               label: const Text('Generar PDF'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFD7282F),
