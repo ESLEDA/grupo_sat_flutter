@@ -21,6 +21,7 @@ dependencies:
   pdf: ^3.11.3
   cupertino_icons: ^1.0.8
   firebase_dynamic_links: ^5.3.6 #eliminar si no fnciona recuperar contraseña
+  intl: ^0.20.2
   
   
   

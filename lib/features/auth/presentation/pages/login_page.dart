@@ -232,25 +232,25 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  TextButton(
-                    onPressed: () {
-                      // En lugar de usar rutas nombradas, usar MaterialPageRoute directamente
-                      Navigator.push(
-                        context, 
-                        MaterialPageRoute(
-                          builder: (context) => const RecuperarContrasenaPage(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      '¡Olvidé mi contraseña!',
-                      style: TextStyle(
-                        color: Color(0xFF193F6E),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15
-                      ),
-                    ),
-                  ),
+                  // TextButton(
+                  //   onPressed: () {
+                  //     // En lugar de usar rutas nombradas, usar MaterialPageRoute directamente
+                  //     Navigator.push(
+                  //       context, 
+                  //       MaterialPageRoute(
+                  //         builder: (context) => const RecuperarContrasenaPage(),
+                  //       ),
+                  //     );
+                  //   },
+                  //   child: const Text(
+                  //     '¡Olvidé mi contraseña!',
+                  //     style: TextStyle(
+                  //       color: Color(0xFF193F6E),
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize: 15
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
